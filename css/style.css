@@ -2778,29 +2778,96 @@ input:checked ~ .toggle-label {
     }
 }
 
-/* ==================== DAILY REWARDS ==================== */
+/* ===== DAILY REWARDS MODAL ===== */
+.daily-rewards-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.9);
+    z-index: 50000;
+    align-items: center;
+    justify-content: center;
+}
 
-.daily-rewards-modal .modal-content {
+.daily-rewards-modal.active {
+    display: flex;
+}
+
+.daily-rewards-content {
+    background: linear-gradient(135deg, #1e3c72, #2a5298);
+    border-radius: 20px;
+    width: 90%;
     max-width: 700px;
-    background: linear-gradient(135deg, rgba(30, 30, 60, 0.98), rgba(20, 20, 40, 0.98));
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+    animation: scaleIn 0.3s ease-out;
+    display: flex;
+    flex-direction: column;
+    max-height: 90vh;
 }
 
-.daily-header {
-    background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 165, 0, 0.2));
-    border-bottom: 2px solid rgba(255, 215, 0, 0.3);
+@keyframes scaleIn {
+    from {
+        transform: scale(0.8);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
 }
 
-/* Streak Info */
-.streak-info {
-    background: rgba(255, 215, 0, 0.1);
-    border: 2px solid rgba(255, 215, 0, 0.3);
+.daily-rewards-header {
+    background: linear-gradient(135deg, rgba(255,215,0,0.3), rgba(255,165,0,0.3));
+    padding: 25px;
+    border-bottom: 2px solid rgba(255,215,0,0.5);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 20px 20px 0 0;
+}
+
+.daily-rewards-header h2 {
+    margin: 0;
+    font-size: 28px;
+    color: #FFD700;
+}
+
+.daily-close-btn {
+    background: rgba(255, 100, 100, 0.3);
+    border: 2px solid rgba(255, 100, 100, 0.6);
+    color: white;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 20px;
+    transition: all 0.3s;
+}
+
+.daily-close-btn:hover {
+    background: rgba(255, 50, 50, 0.6);
+    transform: rotate(90deg);
+}
+
+.daily-rewards-body {
+    padding: 25px;
+    overflow-y: auto;
+    flex: 1;
+}
+
+.streak-container {
+    background: rgba(255,215,0,0.15);
+    border: 2px solid rgba(255,215,0,0.4);
     border-radius: 12px;
     padding: 20px;
     margin-bottom: 25px;
     text-align: center;
 }
 
-.streak-counter {
+.streak-display {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -2810,18 +2877,6 @@ input:checked ~ .toggle-label {
 
 .streak-icon {
     font-size: 48px;
-    animation: flicker 1.5s infinite;
-}
-
-@keyframes flicker {
-    0%, 100% { opacity: 1; transform: scale(1); }
-    50% { opacity: 0.7; transform: scale(1.1); }
-}
-
-.streak-text {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
 }
 
 .streak-number {
@@ -2829,147 +2884,76 @@ input:checked ~ .toggle-label {
     font-weight: bold;
     color: #FFD700;
     line-height: 1;
-    text-shadow: 0 0 20px rgba(255, 215, 0, 0.8);
 }
 
 .streak-label {
     font-size: 14px;
     color: #FFA500;
     text-transform: uppercase;
-    letter-spacing: 1px;
 }
 
-.streak-warning {
-    margin: 0;
+.streak-tip {
+    margin: 10px 0 0 0;
     font-size: 13px;
     color: #FFA500;
 }
 
-/* Daily Rewards Grid */
 .daily-rewards-grid {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    gap: 12px;
+    gap: 10px;
     margin-bottom: 25px;
 }
 
-.daily-reward-item {
-    background: rgba(255, 255, 255, 0.05);
-    border: 2px solid rgba(255, 255, 255, 0.1);
-    border-radius: 12px;
-    padding: 15px 8px;
-    text-align: center;
-    transition: all 0.3s;
-    position: relative;
-}
-
-.daily-reward-item.claimed {
-    background: rgba(76, 175, 80, 0.2);
-    border-color: rgba(76, 175, 80, 0.5);
-}
-
-.daily-reward-item.today {
-    background: rgba(255, 215, 0, 0.2);
-    border-color: #FFD700;
-    box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
-    animation: glow 2s infinite;
-}
-
-@keyframes glow {
-    0%, 100% { box-shadow: 0 0 20px rgba(255, 215, 0, 0.5); }
-    50% { box-shadow: 0 0 30px rgba(255, 215, 0, 0.8); }
-}
-
-.daily-reward-item.locked {
-    opacity: 0.4;
-}
-
-.daily-reward-day {
-    font-size: 12px;
-    font-weight: bold;
-    color: #FFD700;
-    margin-bottom: 8px;
-}
-
-.daily-reward-icon {
-    font-size: 32px;
-    margin: 8px 0;
-}
-
-.daily-reward-amount {
-    font-size: 14px;
-    font-weight: bold;
-    color: white;
-    margin-top: 5px;
-}
-
-.daily-reward-bonus {
-    font-size: 11px;
-    color: #4CAF50;
-    margin-top: 3px;
-}
-
-.daily-checkmark {
-    position: absolute;
-    top: 5px;
-    right: 5px;
-    background: #4CAF50;
-    border-radius: 50%;
-    width: 24px;
-    height: 24px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 14px;
-    box-shadow: 0 2px 8px rgba(76, 175, 80, 0.5);
-}
-
-/* Daily Info */
 .daily-info {
-    background: rgba(255, 255, 255, 0.05);
+    background: rgba(255,255,255,0.05);
     border-radius: 8px;
     padding: 15px;
     font-size: 13px;
     line-height: 1.6;
+    margin-bottom: 20px;
 }
 
 .daily-info p {
     margin: 5px 0;
 }
 
-/* Claim Button */
-.daily-claim-btn {
+.claim-daily-btn {
     width: 100%;
-    font-size: 20px;
-    padding: 15px;
     background: linear-gradient(135deg, #FFD700, #FFA500);
     color: #000;
+    font-size: 20px;
     font-weight: bold;
+    padding: 15px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s;
 }
 
-.daily-claim-btn:hover:not(:disabled) {
-    background: linear-gradient(135deg, #FFA500, #FFD700);
+.claim-daily-btn:hover {
+    transform: scale(1.02);
+    box-shadow: 0 5px 20px rgba(255, 215, 0, 0.5);
 }
 
-.daily-claim-btn:disabled {
+.claim-daily-btn:disabled {
     background: #555;
-    color: #888;
     cursor: not-allowed;
-    opacity: 0.5;
+    opacity: 0.6;
 }
 
-/* Claimed Animation Overlay */
+/* ===== DAILY REWARDS ANIMATION ===== */
 .daily-reward-claimed {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.9);
-    z-index: 40000;
+    background: rgba(0, 0, 0, 0.95);
     display: flex;
     align-items: center;
     justify-content: center;
+    z-index: 200000;
     animation: fadeIn 0.3s;
 }
 
@@ -2979,20 +2963,14 @@ input:checked ~ .toggle-label {
     padding: 40px;
     max-width: 500px;
     text-align: center;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
     border: 3px solid #FFD700;
-    animation: bounceIn 0.6s;
+    box-shadow: 0 20px 60px rgba(251, 191, 36, 0.8);
 }
 
 .claimed-icon {
     font-size: 80px;
     margin-bottom: 20px;
-    animation: rotate 1s;
-}
-
-@keyframes rotate {
-    from { transform: rotate(0deg) scale(0.5); }
-    to { transform: rotate(360deg) scale(1); }
+    animation: bounce 1s infinite;
 }
 
 .claimed-content h2 {
@@ -3009,35 +2987,255 @@ input:checked ~ .toggle-label {
     margin: 25px 0;
 }
 
-.claimed-reward-item {
-    background: rgba(255, 215, 0, 0.2);
-    border: 2px solid rgba(255, 215, 0, 0.5);
-    border-radius: 12px;
-    padding: 15px 25px;
-    font-size: 24px;
-    font-weight: bold;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
 .claimed-message {
     font-size: 16px;
     color: #FFA500;
     margin: 20px 0 0 0;
 }
 
-/* Responsive */
-@media (max-width: 768px) {
-    .daily-rewards-grid {
-        grid-template-columns: repeat(4, 1fr);
+/* ===== TUTORIAL SYSTEM ===== */
+#tutorial-system {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 100000;
+    pointer-events: none;
+}
+
+.tutorial-darken {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    z-index: 100001;
+    pointer-events: none;
+}
+
+.tutorial-spotlight {
+    position: fixed;
+    border: 3px solid var(--warning-color);
+    border-radius: 10px;
+    box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.8), 
+                0 0 30px var(--warning-color);
+    z-index: 100002;
+    pointer-events: none;
+    transition: all 0.3s ease;
+}
+
+.tutorial-spotlight-target {
+    position: relative;
+    z-index: 100004 !important;
+    pointer-events: auto !important;
+}
+
+.tutorial-tooltip {
+    position: fixed;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    border: 3px solid var(--warning-color);
+    border-radius: 15px;
+    padding: 1.5rem;
+    width: 90%;
+    max-width: 400px;
+    min-width: 320px;
+    z-index: 100003;
+    pointer-events: auto;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+    transition: all 0.3s ease;
+}
+
+.tutorial-close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: rgba(255, 100, 100, 0.8);
+    border: none;
+    color: white;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 1.2rem;
+    transition: all 0.2s;
+}
+
+.tutorial-close:hover {
+    background: rgba(255, 50, 50, 1);
+    transform: scale(1.1);
+}
+
+.tutorial-tooltip-content {
+    color: var(--text-primary);
+    min-height: 120px;
+    display: flex;
+    flex-direction: column;
+}
+
+.tutorial-step-number {
+    color: var(--warning-color);
+    font-size: 0.9rem;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+}
+
+.tutorial-tooltip-content h3 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    color: white;
+    line-height: 1.3;
+}
+
+.tutorial-tooltip-content p {
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+    flex: 1;
+}
+
+.tutorial-tooltip-btn {
+    width: 100%;
+    padding: 0.8rem;
+    background: var(--success-color);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.tutorial-tooltip-btn:hover {
+    background: #059669;
+    transform: scale(1.05);
+}
+
+.tutorial-tooltip-btn:disabled {
+    background: #6b7280;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.tutorial-arrow {
+    position: absolute;
+    width: 0;
+    height: 0;
+    border: 10px solid transparent;
+    display: none;
+}
+
+.tutorial-arrow.arrow-top {
+    display: block;
+    top: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-bottom-color: var(--warning-color);
+}
+
+.tutorial-arrow.arrow-bottom {
+    display: block;
+    bottom: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-top-color: var(--warning-color);
+}
+
+.tutorial-arrow.arrow-left {
+    display: block;
+    left: -20px;
+    top: 50%;
+    transform: translateY(-50%);
+    border-right-color: var(--warning-color);
+}
+
+.tutorial-arrow.arrow-right {
+    display: block;
+    right: -20px;
+    top: 50%;
+    transform: translateY(-50%);
+    border-left-color: var(--warning-color);
+}
+
+/* ===== Z-INDEX HIERARCHY ===== */
+#game-container { z-index: 1; }
+
+.offline-notification,
+.puzzle-complete {
+    z-index: 10000 !important;
+}
+
+.daily-rewards-modal {
+    z-index: 50000 !important;
+}
+
+#tutorial-system {
+    z-index: 100000 !important;
+}
+
+.tutorial-darken {
+    z-index: 100001 !important;
+}
+
+.tutorial-spotlight {
+    z-index: 100002 !important;
+}
+
+.tutorial-tooltip {
+    z-index: 100003 !important;
+}
+
+.tutorial-spotlight-target {
+    z-index: 100004 !important;
+}
+
+.daily-reward-claimed {
+    z-index: 200000 !important;
+}
+
+@keyframes pulse {
+    0%, 100% { 
+        transform: scale(1); 
+        box-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
     }
-    
-    .daily-reward-icon {
-        font-size: 24px;
+    50% { 
+        transform: scale(1.05); 
+        box-shadow: 0 0 20px rgba(16, 185, 129, 1);
     }
-    
-    .daily-reward-amount {
-        font-size: 12px;
+}
+
+/* Achievement notification badge */
+.notification-badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    color: white;
+    border-radius: 50%;
+    min-width: 20px;
+    height: 20px;
+    padding: 0 6px;
+    font-size: 12px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(239, 68, 68, 0.5);
+    animation: badgePulse 2s ease-in-out infinite;
+}
+
+@keyframes badgePulse {
+    0%, 100% {
+        transform: scale(1);
+        box-shadow: 0 2px 8px rgba(239, 68, 68, 0.5);
     }
+    50% {
+        transform: scale(1.15);
+        box-shadow: 0 4px 12px rgba(239, 68, 68, 0.8);
+    }
+}
+
+.tab-btn {
+    position: relative; /* Pentru a poziția badge-ul corect */
 }

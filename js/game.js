@@ -25,14 +25,14 @@ class Game {
             lifetimeEnergy: 0,
             
             structures: {
-                monastery: { level: 0, baseProduction: 1, baseCost: 10, costMultiplier: 1.15, resource: 'energy' },
-                farm: { level: 0, baseProduction: 5, baseCost: 50, costMultiplier: 1.2, resource: 'energy' },
-                laboratory: { level: 0, baseProduction: 15, baseCost: 200, costMultiplier: 1.25, resource: 'energy' },
-                tower: { level: 0, baseProduction: 50, baseCost: 1000, costMultiplier: 1.3, resource: 'energy' },
-                portal: { level: 0, baseProduction: 200, baseCost: 5000, costMultiplier: 1.35, resource: 'energy' },
-                shrine: { level: 0, baseProduction: 1, baseCost: 500, costMultiplier: 1.25, resource: 'mana' },
-                altar: { level: 0, baseProduction: 5, baseCost: 2000, costMultiplier: 1.3, resource: 'mana' }
-            },
+    monastery: { level: 0, resource: 'energy' },
+    farm: { level: 0, resource: 'energy' },
+    laboratory: { level: 0, resource: 'energy' },
+    tower: { level: 0, resource: 'energy' },
+    portal: { level: 0, resource: 'energy' },
+    shrine: { level: 0, resource: 'mana' },
+    altar: { level: 0, resource: 'mana' }
+},
             
             volcanoStructures: {
                 lava_forge: { level: 0, baseProduction: 5, baseCost: 500, costMultiplier: 1.2, resource: 'volcanic_energy' },
@@ -49,13 +49,13 @@ class Game {
             volcanoUnlocked: false,
             
             upgrades: {
-                energyBoost: { level: 0, maxLevel: 10, multiplier: 1.5, baseCost: 100, costResource: 'energy' },
-                autoCollect: { level: 0, maxLevel: 5, multiplier: 2, baseCost: 500, costResource: 'energy' },
-                offlineBonus: { level: 0, maxLevel: 5, multiplier: 1.8, baseCost: 300, costResource: 'energy' },
-                gemFinder: { level: 0, maxLevel: 10, multiplier: 1.3, baseCost: 200, costResource: 'energy' },
-                energyCap: { level: 0, maxLevel: 20, multiplier: 2, baseCost: 200, costResource: 'energy' },
-                manaCap: { level: 0, maxLevel: 20, multiplier: 2, baseCost: 100, costResource: 'mana' }
-            },
+    energyBoost: { level: 0 },
+    autoCollect: { level: 0 },
+    offlineBonus: { level: 0 },
+    gemFinder: { level: 0 },
+    energyCap: { level: 0 },
+    manaCap: { level: 0 }
+},
             
             guardians: [],
             activeQuests: [],
@@ -144,34 +144,138 @@ class Game {
         // ========== DEFINITIONS (template-uri fixe) ==========
         
         this.structureData = {
-            monastery: { name: 'Mănăstire Mistică', icon: '🏛️', description: 'Generează energie spirituală' },
-            farm: { name: 'Fermă Magică', icon: '🌾', description: 'Cultivă cristale energetice' },
-            laboratory: { name: 'Laborator Alchemic', icon: '⚗️', description: 'Sintetizează esență pură' },
-            tower: { name: 'Turn Arcanic', icon: '🗼', description: 'Captează energia cosmică' },
-            portal: { name: 'Portal Interdimensional', icon: '🌀', description: 'Extrage putere din alte dimensiuni' },
-            shrine: { name: 'Sanctuar Mistic', icon: '⛩️', description: 'Generează mana spirituală' },
-            altar: { name: 'Altar Arcanic', icon: '🔮', description: 'Canalizează forțe magice' }
-        };
+    monastery: { 
+        name: 'Mănăstire Mistică', 
+        icon: '🏛️', 
+        description: 'Călugării generează energie spirituală',
+        baseProduction: 0.5,
+        baseCost: 10,
+        costMultiplier: 1.15,
+        resource: 'energy'
+    },
+    farm: { 
+        name: 'Fermă Magică', 
+        icon: '🌾', 
+        description: 'Recoltele enchanted generează putere',
+        baseProduction: 2,
+        baseCost: 50,
+        costMultiplier: 1.2,
+        resource: 'energy'
+    },
+    laboratory: { 
+        name: 'Laborator Alchemic', 
+        icon: '⚗️', 
+        description: 'Experimente magice amplifică energia',
+        baseProduction: 8,
+        baseCost: 200,
+        costMultiplier: 1.25,
+        resource: 'energy'
+    },
+    tower: { 
+        name: 'Turn Arcanic', 
+        icon: '🗼', 
+        description: 'Magii puternici invocă energie cosmică',
+        baseProduction: 30,
+        baseCost: 1000,
+        costMultiplier: 1.3,
+        resource: 'energy'
+    },
+    portal: { 
+        name: 'Portal Interdimensional', 
+        icon: '🌀', 
+        description: 'Energie din alte dimensiuni',
+        baseProduction: 100,
+        baseCost: 5000,
+        costMultiplier: 1.35,
+        resource: 'energy'
+    },
+    shrine: { 
+        name: 'Sanctuar Mistic', 
+        icon: '⛩️', 
+        description: 'Loc sacru cu putere divină',
+        baseProduction: 0.5,
+        baseCost: 500,
+        costMultiplier: 1.25,
+        resource: 'mana'
+    },
+    altar: { 
+        name: 'Altar Arcanic', 
+        icon: '🔮', 
+        description: 'Ritualuri mistice generează putere',
+        baseProduction: 2,
+        baseCost: 2000,
+        costMultiplier: 1.3,
+        resource: 'mana'
+    }
+};
         
         this.upgradeData = {
-            energyBoost: { name: 'Amplificator Energetic', icon: '⚡', description: '+50% energie per secundă' },
-            autoCollect: { name: 'Colectare Automată', icon: '🤖', description: 'Dublează producția offline' },
-            offlineBonus: { name: 'Bonus Offline', icon: '⏰', description: '+80% timp offline maxim' },
-            gemFinder: { name: 'Detector de Gemuri', icon: '💎', description: '+30% șansă gemuri din puzzle' },
-            energyCap: { name: 'Depozit Energie', icon: '🔋', description: 'Dublează capacitatea de energie' },
-            manaCap: { name: 'Depozit Mana', icon: '💙', description: 'Dublează capacitatea de mana' }
-        };
+    energyBoost: { 
+        name: 'Amplificator Energetic', 
+        icon: '⚡', 
+        description: '+50% energie per secundă',
+        maxLevel: 10,
+        multiplier: 1.5,
+        baseCost: 100,
+        costResource: 'energy'
+    },
+    autoCollect: { 
+        name: 'Colectare Automată', 
+        icon: '🤖', 
+        description: 'Dublează producția offline',
+        maxLevel: 5,
+        multiplier: 2,
+        baseCost: 500,
+        costResource: 'energy'
+    },
+    offlineBonus: { 
+        name: 'Bonus Offline', 
+        icon: '⏰', 
+        description: '+80% timp offline maxim',
+        maxLevel: 5,
+        multiplier: 1.8,
+        baseCost: 300,
+        costResource: 'energy'
+    },
+    gemFinder: { 
+        name: 'Detector de Gemuri', 
+        icon: '💎', 
+        description: '+30% șansă gemuri din puzzle',
+        maxLevel: 10,
+        multiplier: 1.3,
+        baseCost: 200,
+        costResource: 'energy'
+    },
+    energyCap: { 
+        name: 'Depozit Energie', 
+        icon: '🔋', 
+        description: 'Dublează capacitatea de energie',
+        maxLevel: 20,
+        multiplier: 2,
+        baseCost: 200,
+        costResource: 'energy'
+    },
+    manaCap: { 
+        name: 'Depozit Mana', 
+        icon: '💙', 
+        description: 'Dublează capacitatea de mana',
+        maxLevel: 20,
+        multiplier: 2,
+        baseCost: 100,
+        costResource: 'mana'
+    }
+};
         
         this.guardianTemplates = [
-            { name: 'Sylvan', icon: '🧙‍♂️', rarity: 'common', bonus: 1.1 },
-            { name: 'Lyra', icon: '🧙‍♀️', rarity: 'common', bonus: 1.15 },
-            { name: 'Thorin', icon: '⚔️', rarity: 'rare', bonus: 1.3 },
-            { name: 'Aria', icon: '🏹', rarity: 'rare', bonus: 1.35 },
-            { name: 'Zephyr', icon: '🌪️', rarity: 'epic', bonus: 1.6 },
-            { name: 'Phoenix', icon: '🔥', rarity: 'epic', bonus: 1.7 },
-            { name: 'Celestia', icon: '✨', rarity: 'legendary', bonus: 2.5 },
-            { name: 'Omega', icon: '⭐', rarity: 'legendary', bonus: 3.0 }
-        ];
+    { name: 'Sylvan', icon: '🧙‍♂️', rarity: 'common', bonus: 1.05 },      // era 1.1
+    { name: 'Lyra', icon: '🧙‍♀️', rarity: 'common', bonus: 1.08 },        // era 1.15
+    { name: 'Thorin', icon: '⚔️', rarity: 'rare', bonus: 1.15 },           // era 1.3
+    { name: 'Aria', icon: '🏹', rarity: 'rare', bonus: 1.20 },             // era 1.35
+    { name: 'Zephyr', icon: '🌪️', rarity: 'epic', bonus: 1.35 },          // era 1.6
+    { name: 'Phoenix', icon: '🔥', rarity: 'epic', bonus: 1.45 },          // era 1.7
+    { name: 'Celestia', icon: '✨', rarity: 'legendary', bonus: 1.8 },     // era 2.5
+    { name: 'Omega', icon: '⭐', rarity: 'legendary', bonus: 2.2 }         // era 3.0
+];
         
         this.questTemplates = [
             { id: 'collect_energy', name: 'Colector Energetic', icon: '⚡', description: 'Colectează {amount} energie', type: 'collect', resource: 'energy', amountBase: 500, reward: { type: 'gems', amount: 3 } },
@@ -727,10 +831,8 @@ initTutorial() {
     const tutorialCompleted = localStorage.getItem('tutorialCompleted');
     
     if (!tutorialCompleted) {
-        // Auto-detect limba
-        this.tutorialLang = 'ro'; // FORȚAT românește pentru tine
+        this.tutorialLang = 'ro';
         
-        // Verifică dacă e veteran
         const isVeteran = this.state.statistics.totalStructuresBought > 5 || 
                          this.state.puzzleStats.totalCompleted > 3 ||
                          this.state.guardians.length > 1;
@@ -741,99 +843,98 @@ initTutorial() {
             return;
         }
         
-        // Start tutorial după 1.5s
-        setTimeout(() => {
-            this.startTutorial();
-        }, 1500);
+        const checkAndStart = (attempts = 0) => {
+            const firstStructureBtn = document.querySelector('.structure-card:first-child .buy-btn');
+            
+            if (firstStructureBtn) {
+                console.log('✅ UI ready, starting tutorial');
+                this.startTutorial();
+            } else if (attempts < 10) {
+                console.log(`⏳ UI not ready (attempt ${attempts + 1}/10), waiting...`);
+                setTimeout(() => checkAndStart(attempts + 1), 300);
+            } else {
+                console.error('❌ UI failed to load after 10 attempts');
+                this.renderStructures();
+                setTimeout(() => this.startTutorial(), 500);
+            }
+        };
+        
+        setTimeout(() => checkAndStart(), 2000);
     }
 }
 
 tutorialSteps = [
+    // Pas 1: Bun venit
     {
-        target: null, // No target = centered tooltip
+        target: null,
         title: "🎮 Bine ai venit!",
         text: "Bine ai venit în <strong>Mystic Realms</strong>! Voi fi ghidul tău. Îți voi arăta cum să construiești, să câștigi și să devii puternic. Gata să începem?",
         button: "Hai să începem!",
-        position: 'center'
+        position: 'center',
+        onComplete: () => {
+            if (this.state.energy < 10) {
+                this.state.energy = 500;
+                this.showToast('🎁 +500 ⚡ Energie pentru tutorial!', 'info');
+                this.updateUI();
+            }
+        }
     },
+    
+    // Pas 2: Cumpără prima structură
     {
-        target: '.structures-grid button:first-child', // Primul buton de structură
+        target: '.structure-card:first-child .buy-btn',
         title: "🏛️ Construiește Structuri",
         text: "Apasă aici pentru a cumpăra prima ta structură! <strong>Mănăstirea</strong> costă doar 10 energie și va genera energie automat.",
         button: "Am cumpărat!",
         condition: () => Object.values(this.state.structures).some(s => s.level > 0),
         highlight: true
     },
+    
+    // Pas 3: Explică producția
     {
-    target: '#puzzle-board',
-    title: "💎 Completează Puzzle",
-    text: "Potrivește 3+ culori identice! Atinge scorul țintă pentru a câștiga recompense. Încearcă acum!",
-    button: "Am terminat!",
-    condition: () => {
-        // ⭐ Verifică DIRECT dacă puzzle-ul a fost câștigat
-        const puzzle = this.puzzle;
-        if (!puzzle) return false;
-        
-        // Verifică dacă modal-ul de victory e vizibil SAU stats au crescut
-        const victoryModal = document.getElementById('puzzle-complete');
-        const isVictoryShown = victoryModal && victoryModal.style.display !== 'none';
-        
-        return isVictoryShown || this.state.puzzleStats.totalCompleted > 0;
+        target: '.structure-card:first-child',
+        title: "⚡ Producție Automată",
+        text: "Perfect! Acum vezi <strong>+X/s ⚡</strong>? Aceasta este producția ta automată. Energia crește singură în timp!",
+        button: "Am înțeles!",
+        highlight: true
     },
-    highlight: true,
-    skipToTab: 'puzzle'
-},
-    // În tutorialSteps, modifică pasul 4 (puzzle):
-
-{
-    target: 'button[onclick*="summonGuardian"]',
-    title: "✨ Invocă Primul Guardian",
-    text: "Costă 100 gemuri. <strong>Primești bonus tutorial!</strong> Încearcă-ți norocul - poate prinzi unul legendar!",
-    button: "Am invocat!",
-    condition: () => this.state.guardians.length > 0,
-    highlight: true,
-    onStart: () => {
-        // ⭐ GARANTEAZĂ 100 gems
-        if (this.state.gems < 100) {
-            const needed = 100 - this.state.gems;
-            this.state.gems = 100;
-            this.showToast(`🎁 Bonus tutorial: +${needed} 💎`, 'info');
-            this.updateUI();
-        }
-    }
-},
-    {
-    target: 'button[onclick*="summonGuardian"]',
-    title: "✨ Invocă Primul Guardian",
-    text: "Costă 100 gemuri. <strong>Primești bonus tutorial!</strong> Încearcă-ți norocul - poate prinzi unul legendar!",
-    button: "Am invocat!",
-    condition: () => this.state.guardians.length > 0,
-    highlight: true,
-    onStart: () => {
-        // ⭐ GARANTEAZĂ 100 gems
-        if (this.state.gems < 100) {
-            const needed = 100 - this.state.gems;
-            this.state.gems = 100;
-            this.showToast(`🎁 Bonus tutorial: +${needed} 💎`, 'info');
-            this.updateUI();
-        }
-    }
-},
+    
+    // Pas 4: Gardieni
     {
         target: 'button[onclick*="summonGuardian"]',
         title: "✨ Invocă Primul Guardian",
-        text: "Costă 100 gemuri. Ai suficiente din puzzle! Încearcă-ți norocul - poate prinzi unul legendar!",
+        text: "Costă 100 gemuri. <strong>Primești bonus tutorial!</strong> Încearcă-ți norocul - poate prinzi unul legendar!",
         button: "Am invocat!",
         condition: () => this.state.guardians.length > 0,
-        highlight: true
+        highlight: true,
+        skipToTab: 'guardians',
+        onStart: () => {
+            if (this.state.gems < 100) {
+                const needed = 100 - this.state.gems;
+                this.state.gems = 100;
+                this.showToast(`🎁 Bonus tutorial: +${needed} 💎`, 'info');
+                this.updateUI();
+            }
+        }
     },
+    
+    // Pas 5: Achievements
+    {
+        target: '.tab-btn[data-tab="achievements"]',
+        title: "🏆 Achievements",
+        text: "Aici vezi toate realizările tale! Fiecare achievement îți oferă recompense valoroase. Revino des să le verifici!",
+        button: "Super!",
+        highlight: true,
+        skipToTab: 'achievements'
+    },
+    
+    // Pas 6: Final
     {
         target: null,
-        title: "🎉 Tutorial Complet!",
-        text: "Felicitări! Acum știi bazele jocului:<br>✅ Construiește pentru energie<br>✅ Joacă puzzle pentru gemuri<br>✅ Invocă gardieni pentru putere<br><br><strong>Bonus: +500 💎 Gemuri!</strong>",
-        button: "Să încep aventura!",
-        position: 'center',
-        isLast: true
+        title: "🎉 Gata! Ești pregătit!",
+        text: "Ai terminat tutorialul! Acum știi să:<br>• Construiești structuri<br>• Invoci gardieni<br>• Deblochezi achievements<br><br><strong>Recompensa ta: 500 💎 Gemuri!</strong>",
+        button: "Începe aventura! 🚀",
+        position: 'center'
     }
 ];
 
@@ -1125,50 +1226,58 @@ skipTutorial() {
     if (confirm('Ești sigur că vrei să sari tutorialul? Nu vei primi recompensa de 500 gemuri!')) {
         this.closeTutorial();
         soundManager.playError();
+        
+        localStorage.setItem('tutorialCompleted', 'true');
+        
+        setTimeout(() => {
+            this.checkDailyRewards();
+        }, 500);
     }
 }
 
 completeTutorial() {
     console.log('🎉 completeTutorial() called');
     
-    // Verifică dacă e prima completare
     const completions = parseInt(localStorage.getItem('tutorialCompletions') || '0');
     const isFirstTime = completions === 0;
     
     console.log('Is first time:', isFirstTime, '| Completions:', completions);
     
-    // ⭐ SHOW success ÎNAINTE de close
     if (isFirstTime) {
         this.state.gems += 500;
         
-        // Update tooltip pentru success message
         document.getElementById('tutorial-tooltip-title').textContent = '🎉 Felicitări!';
         document.getElementById('tutorial-tooltip-text').innerHTML = 
             '<strong>Tutorial completat!</strong><br><br>✅ Ai primit <strong>+500 💎 Gemuri</strong>!<br><br>Acum poți explora jocul liber. Mult succes!';
         document.getElementById('tutorial-tooltip-btn').textContent = 'Începe aventura! 🚀';
         
-        // Hide spotlight
         this.hideSpotlight();
-        
-        // Center tooltip
         this.centerTooltip();
         
-        // Effects
         soundManager.playFanfare();
         particleSystem.burst(window.innerWidth / 2, window.innerHeight / 2, 100, '💎');
         
-        // ⭐ CLOSE după 5 secunde (nu 2, ca să vadă mesajul)
         setTimeout(() => {
             this.closeTutorial();
             this.showToast('🎉 +500 💎 Gemuri primite!', 'success');
+            
+            // Arată Daily Rewards după tutorial
+            setTimeout(() => {
+                this.checkDailyRewards();
+            }, 1000);
         }, 5000);
     } else {
+        document.getElementById('tutorial-tooltip-title').textContent = '📚 Tutorial Revăzut';
+        document.getElementById('tutorial-tooltip-text').innerHTML = 
+            'Ai revăzut tutorialul!<br><br>ℹ️ Recompensele se primesc doar la prima completare.';
+        document.getElementById('tutorial-tooltip-btn').textContent = 'Închide';
+        
         soundManager.playSuccess();
-        this.showToast('🎓 Tutorial revăzut!', 'info');
         
         setTimeout(() => {
             this.closeTutorial();
-        }, 2000);
+            this.showToast('📚 Tutorial revăzut (fără recompensă)', 'info');
+        }, 3000);
     }
     
     localStorage.setItem('tutorialCompletions', (completions + 1).toString());
@@ -1219,33 +1328,40 @@ replayTutorial() {
     ];
     
     checkDailyRewards() {
-        const now = Date.now();
-        const lastClaim = this.state.dailyRewards.lastClaimDate;
-        
-        if (!lastClaim) {
-            setTimeout(() => this.showDailyRewards(), 3000);
-            return;
-        }
-        
-        const timeSince = now - lastClaim;
-        const oneDay = 24 * 60 * 60 * 1000;
-        const twoDays = 48 * 60 * 60 * 1000;
-        
-        if (timeSince > twoDays) {
-            this.state.dailyRewards.currentStreak = 0;
-        }
-        
-        if (timeSince >= oneDay) {
-            setTimeout(() => this.showDailyRewards(), 2000);
-        }
+    const now = Date.now();
+    const lastClaim = this.state.dailyRewards.lastClaimDate;
+    
+    // NU afișa daily rewards dacă tutorialul e activ SAU necompletat
+    const tutorialCompleted = localStorage.getItem('tutorialCompleted');
+    if (this.tutorialActive || !tutorialCompleted) {
+        console.log('🎓 Tutorial active/incomplete - daily rewards delayed');
+        return;
     }
     
-    showDailyRewards() {
-        const modal = document.getElementById('daily-rewards-modal');
-        modal.style.display = 'flex';
-        this.renderDailyRewards();
-        soundManager.playNotification();
+    if (!lastClaim) {
+        setTimeout(() => this.showDailyRewards(), 3000);
+        return;
     }
+    
+    const timeSince = now - lastClaim;
+    const oneDay = 24 * 60 * 60 * 1000;
+    const twoDays = 48 * 60 * 60 * 1000;
+    
+    if (timeSince > twoDays) {
+        this.state.dailyRewards.currentStreak = 0;
+    }
+    
+    if (timeSince >= oneDay) {
+        setTimeout(() => this.showDailyRewards(), 2000);
+    }
+}
+    
+    showDailyRewards() {
+    const modal = document.getElementById('daily-rewards-modal');
+    modal.classList.add('active');
+    this.renderDailyRewards();
+    soundManager.playNotification();
+}
     
     renderDailyRewards() {
         const streak = this.state.dailyRewards.currentStreak;
@@ -1408,16 +1524,22 @@ replayTutorial() {
     }
     
     closeDailyRewards() {
-        document.getElementById('daily-rewards-modal').style.display = 'none';
-        soundManager.playClick();
-    }
+    const modal = document.getElementById('daily-rewards-modal');
+    modal.classList.remove('active');
+    soundManager.playClick();
+}
     
     init() {
     console.log('🎮 Initializing Mystic Realms v2.2...');
     
     this.loadGame();
-    this.initAchievements(); // ⭐ ADAUGĂ ASTA
-    this.calculateOfflineProgress();
+    this.initAchievements();
+    
+    // ⭐ CALCULEAZĂ ENERGIA ÎNAINTE DE OFFLINE PROGRESS
+    this.calculateEnergyPerSecond();
+    this.calculateResourceCaps();
+    
+    this.calculateOfflineProgress();  // ← Acum energyPerSecond e deja setat
     this.initBosses();
     this.initShop();
     this.initUI();
@@ -1431,8 +1553,8 @@ replayTutorial() {
     }
     
     this.checkDailyReward();
-    this.checkAchievements(); // ⭐ ADAUGĂ ASTA
-    this.checkBossUnlocks(); // ⭐ ADAUGĂ ASTA
+    this.checkAchievements();
+    this.checkBossUnlocks();
     this.initTutorial();
     this.initDailyRewards();
     
@@ -1459,6 +1581,8 @@ replayTutorial() {
         this.renderBosses(); // ⭐ ADAUGĂ ASTA
         this.renderAutoSettings();
         this.updateUI();
+
+        this.updateAchievementBadge();
     }
     
     switchTab(tabName) {
@@ -1592,7 +1716,8 @@ replayTutorial() {
     // Structuri
     for (let [key, structure] of Object.entries(this.state.structures)) {
         if (structure.level > 0) {
-            const production = structure.baseProduction * structure.level;
+            const data = this.structureData[key];  // ← ADAUGĂ ASTA
+            const production = data.baseProduction * structure.level;  // ← MODIFICAT
             
             if (structure.resource === 'energy') {
                 energyTotal += production;
@@ -1603,13 +1728,14 @@ replayTutorial() {
     }
     
     // Energy Boost upgrade
-    const energyBoostLevel = this.state.upgrades.energyBoost.level;
-    if (energyBoostLevel > 0) {
-        const multiplier = Math.pow(this.state.upgrades.energyBoost.multiplier, energyBoostLevel);
-        energyTotal *= multiplier;
-    }
+const energyBoostLevel = this.state.upgrades.energyBoost.level;
+if (energyBoostLevel > 0) {
+    const data = this.upgradeData.energyBoost;  // ← ADAUGĂ ASTA
+    const multiplier = Math.pow(data.multiplier, energyBoostLevel);  // ← MODIFICAT
+    energyTotal *= multiplier;
+}
     
-    // ⭐ GUARDIAN BONUSES (BALANCED - ADITIV)
+    // GUARDIAN BONUSES (BALANCED - ADITIV)
     let guardianBonus = 0;
     for (let guardian of this.state.guardians) {
         guardianBonus += (guardian.bonus - 1); // Ex: 1.5x → +0.5
@@ -1625,6 +1751,22 @@ replayTutorial() {
         manaTotal *= ascensionBonus;
     }
     
+    // ⭐ SOFT CAP - Reducere după anumite praguri
+    if (energyTotal > 10000) {
+        // După 10K/s, reducere cu 20%
+        energyTotal = 10000 + (energyTotal - 10000) * 0.8;
+    }
+    
+    if (energyTotal > 50000) {
+        // După 50K/s, reducere cu 50%
+        energyTotal = 50000 + (energyTotal - 50000) * 0.5;
+    }
+    
+    if (energyTotal > 200000) {
+        // După 200K/s, reducere cu 75%
+        energyTotal = 200000 + (energyTotal - 200000) * 0.25;
+    }
+    
     this.state.energyPerSecond = energyTotal;
     this.state.manaPerSecond = manaTotal;
     
@@ -1635,73 +1777,93 @@ replayTutorial() {
 }
     
     calculateResourceCaps() {
-        let energyCap = 1000;
-        let manaCap = 100;
-        
-        if (this.state.upgrades.energyCap && this.state.upgrades.energyCap.level > 0) {
-            energyCap *= Math.pow(2, this.state.upgrades.energyCap.level);
-        }
-        
-        if (this.state.upgrades.manaCap && this.state.upgrades.manaCap.level > 0) {
-            manaCap *= Math.pow(2, this.state.upgrades.manaCap.level);
-        }
-        
-        if (this.state.ascensionLevel > 0) {
-            energyCap *= (1 + this.state.ascensionLevel * 0.5);
-            manaCap *= (1 + this.state.ascensionLevel * 0.5);
-        }
-        
-        this.state.energyCap = Math.floor(energyCap);
-        this.state.manaCap = Math.floor(manaCap);
+    let energyCap = 1000;
+    let manaCap = 100;
+    
+    if (this.state.upgrades.energyCap && this.state.upgrades.energyCap.level > 0) {
+        const data = this.upgradeData.energyCap;  // ← ADAUGĂ ASTA
+        energyCap *= Math.pow(data.multiplier, this.state.upgrades.energyCap.level);  // ← MODIFICAT
     }
+    
+    if (this.state.upgrades.manaCap && this.state.upgrades.manaCap.level > 0) {
+        const data = this.upgradeData.manaCap;  // ← ADAUGĂ ASTA
+        manaCap *= Math.pow(data.multiplier, this.state.upgrades.manaCap.level);  // ← MODIFICAT
+    }
+    
+    if (this.state.ascensionLevel > 0) {
+        energyCap *= (1 + this.state.ascensionLevel * 0.5);
+        manaCap *= (1 + this.state.ascensionLevel * 0.5);
+    }
+    
+    this.state.energyCap = Math.floor(energyCap);
+    this.state.manaCap = Math.floor(manaCap);
+}
     
     renderStructures() {
-        const container = document.querySelector('.structures-grid');
-        container.innerHTML = '';
-        
-        for (let [key, structure] of Object.entries(this.state.structures)) {
-            const data = this.structureData[key];
-            const cost = this.getStructureCost(key);
-            const production = this.getStructureProduction(key);
-            const canAfford = this.state.energy >= cost;
-            
-            const resourceIcon = structure.resource === 'energy' ? '⚡' : '💙';
-            
-            const card = document.createElement('div');
-            card.className = `structure-card ${canAfford ? 'can-afford' : ''}`;
-            card.innerHTML = `
-                <div class="structure-header">
-                    <span class="structure-icon">${data.icon}</span>
-                    <span class="structure-level">Nivel ${structure.level}</span>
-                </div>
-                <h3 class="structure-name">${data.name}</h3>
-                <p class="structure-description">${data.description}</p>
-                <div class="structure-production">
-                    ${production > 0 ? `+${this.formatNumber(production)}/s ${resourceIcon}` : 'Necumpărat'}
-                </div>
-                <div class="structure-cost">
-                    <span class="cost-item ${canAfford ? '' : 'cant-afford'}">
-                        ⚡ ${this.formatNumber(cost)}
-                    </span>
-                </div>
-                <button class="buy-btn" ${canAfford ? '' : 'disabled'} onclick="game.buyStructure('${key}')">
-                    ${structure.level === 0 ? 'Cumpără' : 'Îmbunătățește'}
-                </button>
-            `;
-            
-            container.appendChild(card);
-        }
+    const container = document.querySelector('.structures-grid');
+    
+    if (!container) {
+        console.warn('⚠️ .structures-grid not found, retrying...');
+        setTimeout(() => this.renderStructures(), 100);
+        return;
     }
+    
+    container.innerHTML = '';
+    
+    for (let [key, structure] of Object.entries(this.state.structures)) {
+        const data = this.structureData[key];
+        
+        // ⭐ FIX: Verifică că data există
+        if (!data) {
+            console.error(`❌ Missing structureData for ${key}`);
+            continue;
+        }
+        
+        const cost = this.getStructureCost(key);
+        const production = this.getStructureProduction(key);
+        
+        // ⭐ FIX: Calculează canAfford CORECT
+        const canAfford = this.state.energy >= cost;
+                
+        const resourceIcon = structure.resource === 'energy' ? '⚡' : '💙';
+        
+        const card = document.createElement('div');
+        card.className = `structure-card ${canAfford ? 'can-afford' : ''}`;
+        card.innerHTML = `
+            <div class="structure-header">
+                <span class="structure-icon">${data.icon}</span>
+                <span class="structure-level">Nivel ${structure.level}</span>
+            </div>
+            <h3 class="structure-name">${data.name}</h3>
+            <p class="structure-description">${data.description}</p>
+            <div class="structure-production">
+                ${production > 0 ? `+${this.formatNumber(production)}/s ${resourceIcon}` : 'Necumpărat'}
+            </div>
+            <div class="structure-cost">
+                <span class="cost-item ${canAfford ? '' : 'cant-afford'}">
+                    ⚡ ${this.formatNumber(cost)}
+                </span>
+            </div>
+            <button class="buy-btn" ${canAfford ? '' : 'disabled'} onclick="game.buyStructure('${key}')">
+                ${structure.level === 0 ? 'Cumpără' : 'Îmbunătățește'}
+            </button>
+        `;
+        
+        container.appendChild(card);
+    }
+}
     
     getStructureCost(structureKey) {
-        const structure = this.state.structures[structureKey];
-        return Math.floor(structure.baseCost * Math.pow(structure.costMultiplier, structure.level));
-    }
-    
-    getStructureProduction(structureKey) {
-        const structure = this.state.structures[structureKey];
-        return structure.baseProduction * structure.level;
-    }
+    const structure = this.state.structures[structureKey];
+    const data = this.structureData[structureKey];  // ← ADAUGĂ ASTA
+    return Math.floor(data.baseCost * Math.pow(data.costMultiplier, structure.level));
+}
+
+getStructureProduction(structureKey) {
+    const structure = this.state.structures[structureKey];
+    const data = this.structureData[structureKey];  // ← ADAUGĂ ASTA
+    return data.baseProduction * structure.level;
+}
     
     buyStructure(structureKey) {
     const cost = this.getStructureCost(structureKey);
@@ -1748,67 +1910,69 @@ replayTutorial() {
 }
     
     renderUpgrades() {
-        const container = document.querySelector('.upgrades-grid');
-        container.innerHTML = '';
+    const container = document.querySelector('.upgrades-grid');
+    container.innerHTML = '';
+    
+    for (let [key, upgrade] of Object.entries(this.state.upgrades)) {
+        const data = this.upgradeData[key];  // ← ADAUGĂ ASTA
+        const cost = this.getUpgradeCost(key);
+        const canAfford = data.costResource === 'energy' ?  // ← MODIFICAT
+            this.state.energy >= cost : 
+            this.state.mana >= cost;
+        const maxed = upgrade.level >= data.maxLevel;  // ← MODIFICAT
         
-        for (let [key, upgrade] of Object.entries(this.state.upgrades)) {
-            const data = this.upgradeData[key];
-            const cost = this.getUpgradeCost(key);
-            const canAfford = upgrade.costResource === 'energy' ? 
-                this.state.energy >= cost : 
-                this.state.mana >= cost;
-            const maxed = upgrade.level >= upgrade.maxLevel;
-            
-            const costIcon = upgrade.costResource === 'energy' ? '⚡' : '💙';
-            
-            const card = document.createElement('div');
-            card.className = 'upgrade-card';
-            card.innerHTML = `
-                <div class="upgrade-header">
-                    <span class="upgrade-icon">${data.icon}</span>
-                    <div class="upgrade-info">
-                        <h3>${data.name}</h3>
-                        <div class="upgrade-level">Nivel ${upgrade.level}/${upgrade.maxLevel}</div>
-                    </div>
+        const costIcon = data.costResource === 'energy' ? '⚡' : '💙';  // ← MODIFICAT
+        
+        const card = document.createElement('div');
+        card.className = 'upgrade-card';
+        card.innerHTML = `
+            <div class="upgrade-header">
+                <span class="upgrade-icon">${data.icon}</span>
+                <div class="upgrade-info">
+                    <h3>${data.name}</h3>
+                    <div class="upgrade-level">Nivel ${upgrade.level}/${data.maxLevel}</div>
                 </div>
-                <div class="upgrade-effect">
-                    ${data.description}
-                </div>
-                <div class="upgrade-cost">
-                    ${maxed ? '<strong>✅ Maxat</strong>' : `Cost: ${costIcon} ${this.formatNumber(cost)}`}
-                </div>
-                <button class="buy-btn" ${!maxed && canAfford ? '' : 'disabled'} onclick="game.buyUpgrade('${key}')">
-                    ${maxed ? 'Maxat' : 'Îmbunătățește'}
-                </button>
-            `;
-            
-            container.appendChild(card);
-        }
+            </div>
+            <div class="upgrade-effect">
+                ${data.description}
+            </div>
+            <div class="upgrade-cost">
+                ${maxed ? '<strong>✅ Maxat</strong>' : `Cost: ${costIcon} ${this.formatNumber(cost)}`}
+            </div>
+            <button class="buy-btn" ${!maxed && canAfford ? '' : 'disabled'} onclick="game.buyUpgrade('${key}')">
+                ${maxed ? 'Maxat' : 'Îmbunătățește'}
+            </button>
+        `;
+        
+        container.appendChild(card);
     }
+}
     
     getUpgradeCost(upgradeKey) {
-        const upgrade = this.state.upgrades[upgradeKey];
-        return Math.floor(upgrade.baseCost * Math.pow(2, upgrade.level));
-    }
+    const upgrade = this.state.upgrades[upgradeKey];
+    const data = this.upgradeData[upgradeKey];  // ← ADAUGĂ ASTA
+    return Math.floor(data.baseCost * Math.pow(2, upgrade.level));
+}
     
     buyUpgrade(upgradeKey) {
     const upgrade = this.state.upgrades[upgradeKey];
+    const data = this.upgradeData[upgradeKey];  // ← ADAUGĂ ASTA
     
-    if (upgrade.level >= upgrade.maxLevel) {
-        soundManager.playError(); // ← ADĂUGAT
+    if (upgrade.level >= data.maxLevel) {  // ← MODIFICAT
+        soundManager.playError();
         this.showToast('⚠️ Upgrade deja maxat!', 'warning');
         return;
     }
     
     const cost = this.getUpgradeCost(upgradeKey);
-    const resourceCheck = upgrade.costResource === 'energy' ? 
+    const resourceCheck = data.costResource === 'energy' ?  // ← MODIFICAT
         this.state.energy >= cost : 
         this.state.mana >= cost;
     
     if (resourceCheck) {
-        soundManager.playLevelUp(); // ← ADĂUGAT
+        soundManager.playLevelUp();
         
-        if (upgrade.costResource === 'energy') {
+        if (data.costResource === 'energy') {  // ← MODIFICAT
             this.state.energy -= cost;
         } else {
             this.state.mana -= cost;
@@ -1823,11 +1987,11 @@ replayTutorial() {
         
         this.updateQuestProgress('upgrade', 'any', 1);
         
-        this.showToast(`✅ ${this.upgradeData[upgradeKey].name} îmbunătățit!`, 'success');
+        this.showToast(`✅ ${data.name} îmbunătățit!`, 'success');  // ← MODIFICAT
         this.saveGame();
     } else {
-        soundManager.playError(); // ← ADĂUGAT
-        this.showToast(`❌ ${upgrade.costResource === 'energy' ? 'Energie' : 'Mana'} insuficientă!`, 'error');
+        soundManager.playError();
+        this.showToast(`❌ ${data.costResource === 'energy' ? 'Energie' : 'Mana'} insuficientă!`, 'error');  // ← MODIFICAT
     }
 }
 
@@ -1874,13 +2038,13 @@ replayTutorial() {
     this.state.statistics.totalClicks++;
     
     // Determine rarity
-    const random = Math.random();
-    let rarity;
-    
-    if (random < 0.5) rarity = 'common';
-    else if (random < 0.8) rarity = 'rare';
-    else if (random < 0.95) rarity = 'epic';
-    else rarity = 'legendary';
+const random = Math.random();
+let rarity;
+
+if (random < 0.5) rarity = 'common';       // 50% șansă
+else if (random < 0.8) rarity = 'rare';     // 30% șansă
+else if (random < 0.95) rarity = 'epic';    // 15% șansă
+else rarity = 'legendary';                  // 5% șansă
     
     // 🎵 PLAY SOUND BASED ON RARITY
     soundManager.playGuardianSummon(rarity);
@@ -2149,6 +2313,29 @@ replayTutorial() {
             this.showAchievementUnlock(key, achievement);
         }
     }
+
+    this.updateAchievementBadge();
+}
+
+updateAchievementBadge() {
+    let unclaimedCount = 0;
+    
+    for (let [key, achievement] of Object.entries(this.achievementDefinitions)) {
+        const state = this.state.achievements[key];
+        if (state.unlocked && !state.claimed) {
+            unclaimedCount++;
+        }
+    }
+    
+    const badge = document.getElementById('achievements-badge');
+    if (badge) {
+        if (unclaimedCount > 0) {
+            badge.textContent = unclaimedCount;
+            badge.style.display = 'flex';
+        } else {
+            badge.style.display = 'none';
+        }
+    }
 }
 
 showAchievementUnlock(key, achievement) {
@@ -2194,7 +2381,6 @@ claimAchievement(key) {
     const achievement = this.achievementDefinitions[key];
     
     if (state.unlocked && !state.claimed) {
-        // 🏆 ACHIEVEMENT UNLOCK SOUND
         soundManager.playAchievementUnlock();
         
         state.claimed = true;
@@ -2209,10 +2395,14 @@ claimAchievement(key) {
             this.state.energy += achievement.reward.energy;
         }
         
+        // ⭐ ADAUGĂ RE-RENDER + UPDATE BADGE:
+        this.renderAchievements();
+        this.updateAchievementBadge();
+        
         this.updateUI();
         this.saveGame();
         
-        // ⭐ ACHIEVEMENT CLAIM EFFECT
+        // Achievement claim effect
         const btn = event.target;
         const rect = btn.getBoundingClientRect();
         const x = rect.left + rect.width / 2;
@@ -2592,8 +2782,9 @@ showBossVictory(boss) {
     const offlineTime = Math.min(timeDiff, maxOfflineTime);
     const offlineSeconds = offlineTime / 1000;
     
-    let energyPerSecond = this.calculateEnergyPerSecond().energy;
-    let manaPerSecond = this.calculateEnergyPerSecond().mana;
+    // ⭐ IA DIRECT DIN STATE (deja calculat)
+    let energyPerSecond = this.state.energyPerSecond || 0;
+    let manaPerSecond = this.state.manaPerSecond || 0;
     
     const autoCollectLevel = this.state.upgrades.autoCollect ? this.state.upgrades.autoCollect.level : 0;
     if (autoCollectLevel > 0) {
@@ -2601,19 +2792,18 @@ showBossVictory(boss) {
         manaPerSecond *= Math.pow(2, autoCollectLevel);
     }
     
-    const energyEarned = Math.min(Math.floor(energyPerSecond * offlineSeconds), this.state.energyCap);
-    const manaEarned = Math.min(Math.floor(manaPerSecond * offlineSeconds), this.state.manaCap);
+    // Reducere offline - doar 50% din producție
+    const energyEarned = Math.floor(energyPerSecond * offlineSeconds * 0.5);
+    const manaEarned = Math.floor(manaPerSecond * offlineSeconds * 0.5);
     
     this.state.energy = Math.min(this.state.energy + energyEarned, this.state.energyCap);
     this.state.mana = Math.min(this.state.mana + manaEarned, this.state.manaCap);
     this.state.lifetimeEnergy += energyEarned;
     
-    // ⭐ AUTO-COLLECT SKIP MODAL
-    if (this.state.autoFeatures.autoCollectOffline.enabled) {
-        // Auto-collect enabled, just show toast
+    // AUTO-COLLECT SKIP MODAL
+    if (this.state.autoFeatures && this.state.autoFeatures.autoCollectOffline && this.state.autoFeatures.autoCollectOffline.enabled) {
         this.showToast(`🤖 Auto-collected: ${this.formatNumber(energyEarned)} ⚡ + ${this.formatNumber(manaEarned)} 💙`, 'success');
     } else {
-        // Show modal
         this.showOfflineNotification(offlineTime, energyEarned, manaEarned);
     }
 }
