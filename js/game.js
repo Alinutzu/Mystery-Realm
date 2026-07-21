@@ -414,7 +414,7 @@ class Game {
         };
         
         // ⭐ VOLCANO STRUCTURES DATA
-        this.volcanoStructures = {
+        this.volcanoStructureData = {
             lava_forge: { 
                 baseProduction: 5, 
                 baseCost: 500, 
@@ -687,13 +687,14 @@ renderVolcanoStructures() {
     container.innerHTML = '';
     
     for (let [key, structure] of Object.entries(this.state.volcanoStructures)) {
-        const data = this.volcanoStructures[key];
+        const data = this.volcanoStructureData[key];
         const cost = this.getVolcanoStructureCost(key);
         const production = this.getVolcanoStructureProduction(key);
         const canAfford = this.state.energy >= cost; // Use energy to buy volcano structures
         
         const card = document.createElement('div');
         card.className = `structure-card volcano-structure ${canAfford ? 'can-afford' : ''}`;
+        card.dataset.structure = key;
         card.innerHTML = `
             <div class="structure-header">
                 <span class="structure-icon">${data.icon}</span>
@@ -720,13 +721,13 @@ renderVolcanoStructures() {
 
 getVolcanoStructureCost(structureKey) {
     const structure = this.state.volcanoStructures[structureKey];
-    const data = this.volcanoStructures[structureKey];
+    const data = this.volcanoStructureData[structureKey];
     return Math.floor(data.baseCost * Math.pow(data.costMultiplier, structure.level));
 }
 
 getVolcanoStructureProduction(structureKey) {
     const structure = this.state.volcanoStructures[structureKey];
-    const data = this.volcanoStructures[structureKey];
+    const data = this.volcanoStructureData[structureKey];
     return data.baseProduction * structure.level;
 }
 
@@ -761,10 +762,10 @@ buyVolcanoStructure(structureKey) {
             y = rect.top + rect.height / 2;
         }
         
-        particleSystem.burst(x, y, 15, this.volcanoStructures[structureKey].icon);
+        particleSystem.burst(x, y, 15, this.volcanoStructureData[structureKey].icon);
         particleSystem.floatingNumber(x, y - 30, `+${this.formatNumber(this.getVolcanoStructureProduction(structureKey))}/s`, '#ff4500');
         
-        this.showToast(`✅ ${this.volcanoStructures[structureKey].name} îmbunătățit!`, 'success');
+        this.showToast(`✅ ${this.volcanoStructureData[structureKey].name} îmbunătățit!`, 'success');
         this.saveGame();
     } else {
         soundManager.playError();
@@ -872,7 +873,7 @@ tutorialSteps = [
         button: "Hai să începem!",
         position: 'center',
         onComplete: () => {
-            if (this.state.energy < 10) {
+            if (this.state.energy < 500) {
                 this.state.energy = 500;
                 this.showToast('🎁 +500 ⚡ Energie pentru tutorial!', 'info');
                 this.updateUI();
@@ -884,7 +885,7 @@ tutorialSteps = [
     {
         target: '.structure-card:first-child .buy-btn',
         title: "🏛️ Construiește Structuri",
-        text: "Apasă aici pentru a cumpăra prima ta structură! <strong>Mănăstirea</strong> costă doar 10 energie și va genera energie automat.",
+        text: "Apasă aici pentru a cumpăra prima ta structură! <strong>Mănăstirea</strong> costă doar 20 energie și va genera energie automat.",
         button: "Am cumpărat!",
         condition: () => Object.values(this.state.structures).some(s => s.level > 0),
         highlight: true
@@ -942,6 +943,11 @@ startTutorial() {
     this.tutorialActive = true;
     this.tutorialCurrentStep = 0;
     
+    if (this.state.energy < 50) {
+        this.state.energy = 50;
+        this.updateUI();
+    }
+    
     document.getElementById('tutorial-system').style.display = 'block';
     soundManager.playNotification();
     
@@ -952,6 +958,8 @@ startTutorial() {
 
 showTutorialStep() {
     const step = this.tutorialSteps[this.tutorialCurrentStep];
+    
+    this.renderStructures();
     
     // Update tooltip content
     document.querySelector('.tutorial-step-number').textContent = 
@@ -968,27 +976,7 @@ showTutorialStep() {
         btn.disabled = false;
     }
     
-    // ⭐ DELAY mic pentru a permite render-ul DOM-ului
     setTimeout(() => {
-        // Position tooltip și spotlight
-        if (step.target) {
-            this.positionTooltip(step.target, step.position || 'auto');
-            this.showSpotlight(step.target);
-            
-            // Auto-click handler
-            if (step.onClick) {
-                const targetEl = document.querySelector(step.target);
-                if (targetEl) {
-                    targetEl.style.zIndex = '30005'; // ← Mai mare
-                    targetEl.style.pointerEvents = 'all';
-                    targetEl.style.position = 'relative';
-                }
-            }
-        } else {
-            this.centerTooltip();
-            this.hideSpotlight();
-        }
-        
         if (step.skipToTab) {
             this.switchTab(step.skipToTab);
         }
@@ -996,7 +984,21 @@ showTutorialStep() {
         if (step.onStart) {
             step.onStart();
         }
-    }, 100); // ← DELAY 100ms
+        
+        if (step.target) {
+            const targetEl = document.querySelector(step.target);
+            if (!targetEl) {
+                this.centerTooltip();
+                this.hideSpotlight();
+            } else {
+                this.positionTooltip(step.target, step.position || 'auto');
+                this.showSpotlight(step.target);
+            }
+        } else {
+            this.centerTooltip();
+            this.hideSpotlight();
+        }
+    }, 150);
 }
 
 positionTooltip(targetSelector, position) {
@@ -1160,16 +1162,11 @@ closeTutorial() {
     });
 }
 
-hideSpotlight() {
-    document.getElementById('tutorial-spotlight').style.display = 'none';
-}
-
 // În waitForCondition(), adaugă mai mult feedback:
 
 waitForCondition(condition) {
     const step = this.tutorialSteps[this.tutorialCurrentStep];
     
-    // ⭐ Log pentru debugging
     console.log(`🎓 Waiting for condition at step ${this.tutorialCurrentStep + 1}`);
     
     const checkInterval = setInterval(() => {
@@ -1177,27 +1174,17 @@ waitForCondition(condition) {
             console.log(`✅ Condition met at step ${this.tutorialCurrentStep + 1}!`);
             clearInterval(checkInterval);
             
-            // Run onComplete callback
             if (step.onComplete) {
                 step.onComplete();
             }
             
-            // Enable button
             const btn = document.getElementById('tutorial-tooltip-btn');
             btn.disabled = false;
             
             soundManager.playSuccess();
-            
-            // ⭐ Auto-advance după 1.5s (mai mult timp să vadă success)
-            setTimeout(() => {
-                if (this.tutorialActive) { // ← Verifică dacă tutorial-ul e încă activ
-                    this.tutorialNext();
-                }
-            }, 1500);
         }
     }, 300);
     
-    // Timeout după 3 minute
     setTimeout(() => {
         console.warn(`⏱️ Timeout at step ${this.tutorialCurrentStep + 1}`);
         clearInterval(checkInterval);
@@ -1285,16 +1272,6 @@ completeTutorial() {
     
     this.updateUI();
     this.saveGame();
-}
-
-closeTutorial() {
-    document.getElementById('tutorial-system').style.display = 'none';
-    this.tutorialActive = false;
-    
-    // Reset z-index
-    document.querySelectorAll('[style*="z-index: 30004"]').forEach(el => {
-        el.style.zIndex = '';
-    });
 }
 
 replayTutorial() {
@@ -1558,6 +1535,9 @@ replayTutorial() {
     this.initTutorial();
     this.initDailyRewards();
     
+    soundManager.enabled = this.state.settings.soundEnabled;
+    soundManager.musicEnabled = this.state.settings.musicEnabled;
+    
     console.log('✅ Game initialized successfully!');
 }
     
@@ -1573,14 +1553,12 @@ replayTutorial() {
         this.renderUpgrades();
         this.renderGuardians();
         this.renderQuests();
-        this.renderAchievements(); // ⭐ ADAUGĂ ASTA
+        this.renderAchievements();
 
-        if (this.state.bosses && Object.keys(this.state.bosses).length === 0) {
-    }
-
-        this.renderBosses(); // ⭐ ADAUGĂ ASTA
+        this.renderBosses();
         this.renderAutoSettings();
         this.updateUI();
+        this.updateRealmSelector();
 
         this.updateAchievementBadge();
     }
@@ -1635,26 +1613,14 @@ replayTutorial() {
     const energyGained = this.state.energyPerSecond * deltaTime;
     const manaGained = this.state.manaPerSecond * deltaTime;
     
-    if (this.state.energy < this.state.energyCap) {
-        this.state.energy = Math.min(this.state.energy + energyGained, this.state.energyCap);
-    } else {
-        this.state.energy += energyGained;
-    }
+    this.state.energy = Math.min(this.state.energy + energyGained, this.state.energyCap);
     
-    if (this.state.mana < this.state.manaCap) {
-        this.state.mana = Math.min(this.state.mana + manaGained, this.state.manaCap);
-    } else {
-        this.state.mana += manaGained;
-    }
+    this.state.mana = Math.min(this.state.mana + manaGained, this.state.manaCap);
     
     if (this.state.volcanoUnlocked) {
         const volcanicGained = this.state.volcanicEnergyPerSecond * deltaTime;
         
-        if (this.state.volcanicEnergy < this.state.volcanicEnergyCap) {
-            this.state.volcanicEnergy = Math.min(this.state.volcanicEnergy + volcanicGained, this.state.volcanicEnergyCap);
-        } else {
-            this.state.volcanicEnergy += volcanicGained;
-        }
+        this.state.volcanicEnergy = Math.min(this.state.volcanicEnergy + volcanicGained, this.state.volcanicEnergyCap);
         
         // ⭐ TRACK volcanic energy
         this.state.statistics.totalVolcanicEnergyGenerated += volcanicGained;
@@ -1680,6 +1646,7 @@ replayTutorial() {
     
     this.state.lastTick = now;
     this.updateUI();
+    this.updateStructureButtons();
     
     if (!this.lastAchievementCheck || now - this.lastAchievementCheck > 5000) {
         this.checkAchievements();
@@ -1799,12 +1766,13 @@ if (energyBoostLevel > 0) {
     this.state.manaCap = Math.floor(manaCap);
 }
     
-    renderStructures() {
+    renderStructures(retries = 0) {
     const container = document.querySelector('.structures-grid');
     
     if (!container) {
-        console.warn('⚠️ .structures-grid not found, retrying...');
-        setTimeout(() => this.renderStructures(), 100);
+        if (retries < 10) {
+            setTimeout(() => this.renderStructures(retries + 1), 100);
+        }
         return;
     }
     
@@ -1829,6 +1797,7 @@ if (energyBoostLevel > 0) {
         
         const card = document.createElement('div');
         card.className = `structure-card ${canAfford ? 'can-afford' : ''}`;
+        card.dataset.structure = key;
         card.innerHTML = `
             <div class="structure-header">
                 <span class="structure-icon">${data.icon}</span>
@@ -1852,6 +1821,48 @@ if (energyBoostLevel > 0) {
         container.appendChild(card);
     }
 }
+    
+    updateStructureButtons() {
+        for (let [key, structure] of Object.entries(this.state.structures)) {
+            const card = document.querySelector(`.structure-card[data-structure="${key}"]`);
+            if (!card) continue;
+            const cost = this.getStructureCost(key);
+            const canAfford = this.state.energy >= cost;
+            const btn = card.querySelector('.buy-btn');
+            if (btn) {
+                btn.disabled = !canAfford;
+                btn.textContent = structure.level === 0 ? 'Cumpără' : 'Îmbunătățește';
+            }
+            if (canAfford) card.classList.add('can-afford');
+            else card.classList.remove('can-afford');
+            const costEl = card.querySelector('.cost-item');
+            if (costEl) {
+                costEl.textContent = `⚡ ${this.formatNumber(cost)}`;
+                costEl.className = canAfford ? 'cost-item' : 'cost-item cant-afford';
+            }
+        }
+        
+        if (this.state.volcanoUnlocked && this.state.currentRealm === 'volcano') {
+            for (let [key, structure] of Object.entries(this.state.volcanoStructures)) {
+                const card = document.querySelector(`.structure-card[data-structure="${key}"]`);
+                if (!card) continue;
+                const cost = this.getVolcanoStructureCost(key);
+                const canAfford = this.state.energy >= cost;
+                const btn = card.querySelector('.buy-btn');
+                if (btn) {
+                    btn.disabled = !canAfford;
+                    btn.textContent = structure.level === 0 ? 'Cumpără' : 'Îmbunătățește';
+                }
+                if (canAfford) card.classList.add('can-afford');
+                else card.classList.remove('can-afford');
+                const costEl = card.querySelector('.cost-item');
+                if (costEl) {
+                    costEl.textContent = `⚡ ${this.formatNumber(cost)}`;
+                    costEl.className = canAfford ? 'cost-item' : 'cost-item cant-afford';
+                }
+            }
+        }
+    }
     
     getStructureCost(structureKey) {
     const structure = this.state.structures[structureKey];
@@ -1982,7 +1993,7 @@ getStructureProduction(structureKey) {
         
         this.calculateEnergyPerSecond();
         this.calculateResourceCaps();
-        this.renderUpgrades();
+        this.updateStructureButtons();
         this.updateUI();
         
         this.updateQuestProgress('upgrade', 'any', 1);
@@ -2181,6 +2192,7 @@ else rarity = 'legendary';                  // 5% șansă
             
             const card = document.createElement('div');
             card.className = `quest-card ${quest.completed ? 'completed' : ''}`;
+            card.dataset.questId = quest.id;
             card.innerHTML = `
                 <div class="quest-header">
                     <span class="quest-icon">${quest.icon}</span>
@@ -2219,7 +2231,21 @@ else rarity = 'legendary';                  // 5% șansă
         return `${reward.amount} ${icons[reward.type] || reward.type}`;
     }
     
+    updateQuestUI() {
+        for (let quest of this.state.activeQuests) {
+            const card = document.querySelector(`.quest-card[data-quest-id="${quest.id}"]`);
+            if (!card) continue;
+            const progress = Math.min(quest.progress, quest.amount);
+            const percentage = (progress / quest.amount) * 100;
+            const fill = card.querySelector('.progress-fill');
+            const text = card.querySelector('.progress-text');
+            if (fill) fill.style.width = percentage + '%';
+            if (text) text.textContent = `${this.formatNumber(progress)} / ${this.formatNumber(quest.amount)}`;
+        }
+    }
+    
     updateQuestProgress(type, target, amount) {
+        let completed = false;
         for (let quest of this.state.activeQuests) {
             if (quest.completed) continue;
             
@@ -2232,12 +2258,17 @@ else rarity = 'legendary';                  // 5% șansă
                     if (quest.progress >= quest.amount) {
                         quest.completed = true;
                         this.showToast(`✅ Quest completat: ${quest.name}`, 'success');
+                        completed = true;
                     }
                 }
             }
         }
         
-        this.renderQuests();
+        if (completed) {
+            this.renderQuests();
+        } else {
+            this.updateQuestUI();
+        }
     }
     
     claimQuest(questId) {
@@ -3014,6 +3045,9 @@ if (saveData.state.autoBuyThreshold === undefined) {
     resetGame() {
         if (confirm('Sigur vrei să resetezi complet jocul? TOT progresul va fi pierdut!')) {
             localStorage.removeItem('mysticRealms_save');
+            localStorage.removeItem('tutorialCompleted');
+            localStorage.removeItem('tutorialCompletions');
+            localStorage.removeItem('soundSettings');
             location.reload();
         }
     }
@@ -3081,8 +3115,8 @@ if (saveData.state.autoBuyThreshold === undefined) {
     
     document.getElementById('energy-per-second').textContent = productionText;
     
+    this.updateRealmSelector();
     this.updateAscensionButton();
-    this.updateRealmSelector(); // ⭐ ADAUGĂ ASTA
 }
 
 updateRealmSelector() {
@@ -3581,12 +3615,19 @@ changeTheme(theme) {
 
 toggleSound(enabled) {
     this.state.settings.soundEnabled = enabled;
+    soundManager.enabled = enabled;
     this.showToast(`🔊 Sound ${enabled ? 'enabled' : 'disabled'}`, 'info');
     this.saveGame();
 }
 
 toggleMusic(enabled) {
     this.state.settings.musicEnabled = enabled;
+    soundManager.musicEnabled = enabled;
+    if (enabled) {
+        soundManager.startBackgroundMusic();
+    } else {
+        soundManager.stopBackgroundMusic();
+    }
     this.showToast(`🎵 Music ${enabled ? 'enabled' : 'disabled'}`, 'info');
     this.saveGame();
 }
@@ -4755,7 +4796,7 @@ confirmReset() {
                 <button class="cancel-btn" onclick="this.parentElement.parentElement.parentElement.remove()">
                     Cancel
                 </button>
-                <button class="confirm-btn danger-btn" onclick="game.resetGame()">
+                <button class="confirm-btn danger-btn" onclick="this.closest('.confirm-modal').remove(); localStorage.removeItem('mysticRealms_save'); localStorage.removeItem('tutorialCompleted'); localStorage.removeItem('tutorialCompletions'); localStorage.removeItem('soundSettings'); location.reload();">
                     Reset Game
                 </button>
             </div>
@@ -4789,9 +4830,9 @@ confirmReset() {
     }
     
     formatNumber(num) {
-        if (num >= 1000000000) return (num / 1000000000).toFixed(2) + 'B';
-        if (num >= 1000000) return (num / 1000000).toFixed(2) + 'M';
-        if (num >= 1000) return (num / 1000).toFixed(2) + 'K';
+        if (num >= 1000000000) return parseFloat((num / 1000000000).toFixed(2)) + 'B';
+        if (num >= 1000000) return parseFloat((num / 1000000).toFixed(2)) + 'M';
+        if (num >= 1000) return parseFloat((num / 1000).toFixed(2)) + 'K';
         return Math.floor(num).toString();
     }
     
@@ -4817,20 +4858,6 @@ confirmReset() {
     
     showSettings() {
         this.showSettingsModal();
-        const stats = `
-═══════════════════════════
-📊 STATISTICI JOC
-═══════════════════════════
-
-🌟 Nivel Ascensiune: ${this.state.ascensionLevel}
-⚡ Energie Lifetime: ${this.formatNumber(this.state.lifetimeEnergy)}
-🧩 Puzzle-uri: ${this.state.puzzleStats.totalCompleted}
-📜 Quest-uri azi: ${this.state.completedQuestsToday}/${this.state.dailyQuestLimit}
-👥 Gardieni: ${this.state.guardians.length}
-
-Versiune: 2.2
-        `;
-        alert(stats);
     }
 }
 
@@ -5344,7 +5371,7 @@ exitBossBattle() {
 // INITIALIZATION
 // ====================================
 
-let game;
+var game;
 
 window.addEventListener('DOMContentLoaded', () => {
     game = new Game();

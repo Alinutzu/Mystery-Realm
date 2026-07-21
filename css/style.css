@@ -2586,9 +2586,10 @@ input:checked ~ .toggle-label {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.80); /* ← Opacitate fixă 80% */
+    background: rgba(0, 0, 0, 0.80);
     z-index: 30001;
     animation: fadeIn 0.3s;
+    pointer-events: none;
 }
 
 /* Spotlight - shadow-ul "taie" overlay-ul */
