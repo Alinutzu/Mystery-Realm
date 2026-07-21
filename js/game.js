@@ -502,11 +502,12 @@ class Game {
     }
 
     initAchievements() {
-    // Definim achievements
     this.achievementDefinitions = {
+        // === PROGRES ===
         first_structure: { 
             name: 'Primul Pas', 
             icon: '🏛️', 
+            category: 'progres',
             description: 'Cumpără prima structură', 
             condition: () => Object.values(this.state.structures).some(s => s.level > 0),
             reward: { gems: 5 }
@@ -514,6 +515,7 @@ class Game {
         energy_1k: { 
             name: 'Acumulator I', 
             icon: '⚡', 
+            category: 'progres',
             description: 'Generează 1,000 energie lifetime', 
             condition: () => this.state.lifetimeEnergy >= 1000,
             reward: { gems: 10 }
@@ -521,6 +523,7 @@ class Game {
         energy_10k: { 
             name: 'Acumulator II', 
             icon: '⚡', 
+            category: 'progres',
             description: 'Generează 10,000 energie lifetime', 
             condition: () => this.state.lifetimeEnergy >= 10000,
             reward: { gems: 25 }
@@ -528,34 +531,57 @@ class Game {
         energy_100k: { 
             name: 'Acumulator III', 
             icon: '⚡', 
+            category: 'progres',
             description: 'Generează 100,000 energie lifetime', 
             condition: () => this.state.lifetimeEnergy >= 100000,
             reward: { gems: 50, crystals: 1 }
         },
-        first_guardian: { 
-            name: 'Invocator', 
-            icon: '👥', 
-            description: 'Invocă primul guardian', 
-            condition: () => this.state.guardians.length > 0,
-            reward: { gems: 10 }
+        energy_1m: { 
+            name: 'Acumulator IV', 
+            icon: '⚡', 
+            category: 'progres',
+            description: 'Generează 1,000,000 energie lifetime', 
+            condition: () => this.state.lifetimeEnergy >= 1000000,
+            reward: { gems: 200, crystals: 5 }
         },
-        collector: { 
-            name: 'Colecționar', 
-            icon: '👥', 
-            description: 'Obține 5 gardieni', 
-            condition: () => this.state.guardians.length >= 5,
-            reward: { gems: 30 }
+        structure_master: { 
+            name: 'Arhitect', 
+            icon: '🏗️', 
+            category: 'progres',
+            description: 'Ai 3 structuri la nivel 10+', 
+            condition: () => Object.values(this.state.structures).filter(s => s.level >= 10).length >= 3,
+            reward: { gems: 35, crystals: 1 }
         },
-        legendary_pull: { 
-            name: 'Norocos', 
-            icon: '⭐', 
-            description: 'Invocă un guardian legendar', 
-            condition: () => this.state.guardians.some(g => g.rarity === 'legendary'),
-            reward: { gems: 100, crystals: 2 }
+        structure_legendar: { 
+            name: 'Maestru Arhitect', 
+            icon: '🏗️', 
+            category: 'progres',
+            description: 'Ai o structură la nivel 50', 
+            condition: () => Object.values(this.state.structures).some(s => s.level >= 50),
+            reward: { gems: 150, crystals: 3 }
         },
+        first_ascension: { 
+            name: 'Ascensiune', 
+            icon: '🌟', 
+            category: 'progres',
+            description: 'Fă prima ascensiune', 
+            condition: () => this.state.ascensionLevel > 0,
+            reward: { gems: 50 }
+        },
+        ascension_master: { 
+            name: 'Maestru Ascensiunii', 
+            icon: '🌟', 
+            category: 'progres',
+            description: 'Ajunge la nivel 5 de ascensiune', 
+            condition: () => this.state.ascensionLevel >= 5,
+            reward: { gems: 500, crystals: 20 }
+        },
+
+        // === PUZZLE ===
         puzzle_master: { 
             name: 'Maestru Puzzle', 
             icon: '🧩', 
+            category: 'puzzle',
             description: 'Completează 10 puzzle-uri', 
             condition: () => this.state.puzzleStats.totalCompleted >= 10,
             reward: { gems: 20 }
@@ -563,41 +589,177 @@ class Game {
         puzzle_veteran: { 
             name: 'Veteran Puzzle', 
             icon: '🧩', 
+            category: 'puzzle',
             description: 'Completează 50 puzzle-uri', 
             condition: () => this.state.puzzleStats.totalCompleted >= 50,
             reward: { gems: 75, crystals: 3 }
         },
-        first_ascension: { 
-            name: 'Ascensiune', 
-            icon: '🌟', 
-            description: 'Fă prima ascensiune', 
-            condition: () => this.state.ascensionLevel > 0,
+        puzzle_legend: { 
+            name: 'Legenda Puzzle-urilor', 
+            icon: '🧩', 
+            category: 'puzzle',
+            description: 'Completează 200 puzzle-uri', 
+            condition: () => this.state.puzzleStats.totalCompleted >= 200,
+            reward: { gems: 300, crystals: 10 }
+        },
+        high_scorer: { 
+            name: 'Scor Înalt', 
+            icon: '🎯', 
+            category: 'puzzle',
+            description: 'Obține un scor de 1000 într-un puzzle', 
+            condition: () => this.state.puzzleStats.highScore >= 1000,
             reward: { gems: 50 }
         },
+        boss_slayer: { 
+            name: 'Slayer de Boss-uri', 
+            icon: '🐉', 
+            category: 'puzzle',
+            description: 'Înfrângi 3 boss-uri', 
+            condition: () => {
+                const defeated = Object.values(this.state.bosses).filter(b => b.defeated).length;
+                return defeated >= 3;
+            },
+            reward: { gems: 200, crystals: 5 }
+        },
+        boss_master: { 
+            name: 'Domnitorul', 
+            icon: '🐉', 
+            category: 'puzzle',
+            description: 'Înfrângi toți boss-ii', 
+            condition: () => {
+                const defeated = Object.values(this.state.bosses).filter(b => b.defeated).length;
+                return defeated >= 5;
+            },
+            reward: { gems: 1000, crystals: 30 }
+        },
+
+        // === COLECȚIE ===
+        first_guardian: { 
+            name: 'Invocator', 
+            icon: '👥', 
+            category: 'colectie',
+            description: 'Invocă primul guardian', 
+            condition: () => this.state.guardians.length > 0,
+            reward: { gems: 10 }
+        },
+        collector: { 
+            name: 'Colecționar', 
+            icon: '👥', 
+            category: 'colectie',
+            description: 'Obține 5 gardieni', 
+            condition: () => this.state.guardians.length >= 5,
+            reward: { gems: 30 }
+        },
+        guardian_army: { 
+            name: 'Armata', 
+            icon: '👥', 
+            category: 'colectie',
+            description: 'Obține 15 gardieni', 
+            condition: () => this.state.guardians.length >= 15,
+            reward: { gems: 150, crystals: 5 }
+        },
+        legendary_pull: { 
+            name: 'Norocos', 
+            icon: '⭐', 
+            category: 'colectie',
+            description: 'Invocă un guardian legendar', 
+            condition: () => this.state.guardians.some(g => g.rarity === 'legendary'),
+            reward: { gems: 100, crystals: 2 }
+        },
+        epic_collector: { 
+            name: 'Colecționar Epic', 
+            icon: '💜', 
+            category: 'colectie',
+            description: 'Obține 5 gardieni epic', 
+            condition: () => this.state.guardians.filter(g => g.rarity === 'epic').length >= 5,
+            reward: { gems: 250, crystals: 10 }
+        },
+        gem_hoarder: { 
+            name: 'Hoarder', 
+            icon: '💎', 
+            category: 'colectie',
+            description: 'Acumulează 5000 gemuri', 
+            condition: () => this.state.gems >= 5000,
+            reward: { gems: 500, crystals: 5 }
+        },
+
+        // === TIMP ===
         quest_completionist: { 
             name: 'Completionist', 
             icon: '📜', 
+            category: 'timp',
             description: 'Completează 20 quest-uri', 
             condition: () => this.state.totalQuestsCompleted >= 20,
             reward: { gems: 40 }
         },
+        quest_master: { 
+            name: 'Maestru Quest-uri', 
+            icon: '📜', 
+            category: 'timp',
+            description: 'Completează 100 quest-uri', 
+            condition: () => this.state.totalQuestsCompleted >= 100,
+            reward: { gems: 200, crystals: 5 }
+        },
+        click_master: { 
+            name: 'Maestrul Click-ului', 
+            icon: '🖱️', 
+            category: 'timp',
+            description: 'Fă 5000 click-uri', 
+            condition: () => this.state.statistics.totalClicks >= 5000,
+            reward: { gems: 50 }
+        },
+        click_legend: { 
+            name: 'Legenda Click-ului', 
+            icon: '🖱️', 
+            category: 'timp',
+            description: 'Fă 50,000 click-uri', 
+            condition: () => this.state.statistics.totalClicks >= 50000,
+            reward: { gems: 300, crystals: 5 }
+        },
+        session_1h: { 
+            name: 'Jucător Dedicat', 
+            icon: '⏰', 
+            category: 'timp',
+            description: 'Joacă timp de 1 oră total', 
+            condition: () => this.state.statistics.sessionsPlayed >= 10,
+            reward: { gems: 25 }
+        },
+        veteran_player: { 
+            name: 'Veteran', 
+            icon: '⏰', 
+            category: 'timp',
+            description: 'Joacă 50 de sesiuni', 
+            condition: () => this.state.statistics.sessionsPlayed >= 50,
+            reward: { gems: 200, crystals: 5 }
+        },
+
+        // === SPECIALE ===
         rich: { 
             name: 'Bogat', 
             icon: '💎', 
+            category: 'speciale',
             description: 'Acumulează 500 gemuri', 
             condition: () => this.state.gems >= 500,
             reward: { gems: 100 }
         },
-        structure_master: { 
-            name: 'Arhitect', 
-            icon: '🏗️', 
-            description: 'Ai 3 structuri la nivel 10+', 
-            condition: () => Object.values(this.state.structures).filter(s => s.level >= 10).length >= 3,
-            reward: { gems: 35, crystals: 1 }
+        combo_king: { 
+            name: 'Regele Combo', 
+            icon: '🔥', 
+            category: 'speciale',
+            description: 'Obține un combo de 5 în puzzle', 
+            condition: () => this.state.statistics.fastestPuzzleTime < 30,
+            reward: { gems: 75 }
+        },
+        daily_streak_7: { 
+            name: 'Jucător Zilnic', 
+            icon: '🔥', 
+            category: 'speciale',
+            description: 'Revino 7 zile consecutive', 
+            condition: () => this.state.dailyRewards && this.state.dailyRewards.currentStreak >= 7,
+            reward: { gems: 300, crystals: 10 }
         }
     };
     
-    // Initialize achievement state dacă nu există
     if (!this.state.achievements) {
         this.state.achievements = {};
     }
@@ -608,7 +770,6 @@ class Game {
         }
     }
     
-    // Track total quests completed
     if (this.state.totalQuestsCompleted === undefined) {
         this.state.totalQuestsCompleted = 0;
     }
@@ -2627,10 +2788,47 @@ renderAchievements() {
     
     container.innerHTML = '';
     
+    const categories = ['toate', 'progres', 'puzzle', 'colectie', 'timp', 'speciale'];
+    const categoryNames = {
+        toate: '📋 Toate',
+        progres: '⚡ Progres',
+        puzzle: '🧩 Puzzle',
+        colectie: '👥 Colecție',
+        timp: '⏰ Timp',
+        speciale: '✨ Speciale'
+    };
+    
+    if (!this.currentAchievementCategory) {
+        this.currentAchievementCategory = 'toate';
+    }
+    
+    // Category filter tabs
+    const filterDiv = document.createElement('div');
+    filterDiv.className = 'achievement-categories';
+    filterDiv.style.cssText = 'display:flex; flex-wrap:wrap; gap:8px; margin-bottom:1rem; justify-content:center;';
+    
+    for (const cat of categories) {
+        const btn = document.createElement('button');
+        btn.className = `category-btn ${this.currentAchievementCategory === cat ? 'active' : ''}`;
+        btn.textContent = categoryNames[cat];
+        btn.style.cssText = `padding:6px 12px; border-radius:20px; border:2px solid ${this.currentAchievementCategory === cat ? '#6366f1' : 'rgba(255,255,255,0.15)'}; background:${this.currentAchievementCategory === cat ? '#6366f1' : 'rgba(255,255,255,0.05)'}; color:white; cursor:pointer; font-size:0.85rem; font-weight:bold; transition:all 0.2s;`;
+        btn.onclick = () => {
+            this.currentAchievementCategory = cat;
+            this.renderAchievements();
+        };
+        filterDiv.appendChild(btn);
+    }
+    container.appendChild(filterDiv);
+    
     let unlockedCount = 0;
     let totalCount = Object.keys(this.achievementDefinitions).length;
     
-    for (let [key, achievement] of Object.entries(this.achievementDefinitions)) {
+    // Filter achievements
+    const filtered = Object.entries(this.achievementDefinitions).filter(([key, ach]) => {
+        return this.currentAchievementCategory === 'toate' || ach.category === this.currentAchievementCategory;
+    });
+    
+    for (const [key, achievement] of filtered) {
         const state = this.state.achievements[key];
         if (state.unlocked) unlockedCount++;
         
@@ -2658,9 +2856,16 @@ renderAchievements() {
     }
     
     // Update progress
+    const totalForCategory = filtered.length;
+    const unlockedForCategory = filtered.filter(([key]) => this.state.achievements[key].unlocked).length;
+    
     const progress = document.querySelector('.achievements-progress');
     if (progress) {
-        progress.textContent = `${unlockedCount}/${totalCount} Unlocked`;
+        if (this.currentAchievementCategory === 'toate') {
+            progress.textContent = `${unlockedCount}/${totalCount} Unlocked`;
+        } else {
+            progress.textContent = `${unlockedForCategory}/${totalForCategory} Unlocked`;
+        }
     }
 }
 
