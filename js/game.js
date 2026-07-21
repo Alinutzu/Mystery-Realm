@@ -844,24 +844,63 @@ initTutorial() {
             return;
         }
         
-        const checkAndStart = (attempts = 0) => {
-            const firstStructureBtn = document.querySelector('.structure-card:first-child .buy-btn');
-            
-            if (firstStructureBtn) {
-                console.log('✅ UI ready, starting tutorial');
-                this.startTutorial();
-            } else if (attempts < 10) {
-                console.log(`⏳ UI not ready (attempt ${attempts + 1}/10), waiting...`);
-                setTimeout(() => checkAndStart(attempts + 1), 300);
-            } else {
-                console.error('❌ UI failed to load after 10 attempts');
-                this.renderStructures();
-                setTimeout(() => this.startTutorial(), 500);
-            }
-        };
-        
-        setTimeout(() => checkAndStart(), 2000);
+        setTimeout(() => this.showTutorialPrompt(), 2000);
     }
+}
+
+showTutorialPrompt() {
+    const modal = document.createElement('div');
+    modal.id = 'tutorial-prompt';
+    modal.className = 'tutorial-prompt-modal';
+    modal.innerHTML = `
+        <div class="tutorial-prompt-card">
+            <div class="tutorial-prompt-icon">🎓</div>
+            <h2>Bine ai venit în Mystic Realms!</h2>
+            <p>Ești nou aici? Îți recomandăm tutorialul pentru a învăța bazele jocului.</p>
+            <div class="tutorial-prompt-features">
+                <div class="tutorial-prompt-feature">🏛️ Construiește structuri</div>
+                <div class="tutorial-prompt-feature">✨ Invocă gardieni</div>
+                <div class="tutorial-prompt-feature">🏆 Deblochează realizări</div>
+            </div>
+            <div class="tutorial-prompt-buttons">
+                <button class="tutorial-prompt-btn tutorial-prompt-yes" onclick="game.acceptTutorial()">
+                    Da, vreau tutorial!
+                </button>
+                <button class="tutorial-prompt-btn tutorial-prompt-no" onclick="game.skipTutorialPrompt()">
+                    Nu, mulțumesc
+                </button>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+}
+
+acceptTutorial() {
+    const modal = document.getElementById('tutorial-prompt');
+    if (modal) modal.remove();
+    
+    const checkAndStart = (attempts = 0) => {
+        const firstStructureBtn = document.querySelector('.structure-card:first-child .buy-btn');
+        
+        if (firstStructureBtn) {
+            this.startTutorial();
+        } else if (attempts < 10) {
+            setTimeout(() => checkAndStart(attempts + 1), 300);
+        } else {
+            this.renderStructures();
+            setTimeout(() => this.startTutorial(), 500);
+        }
+    };
+    
+    setTimeout(() => checkAndStart(), 100);
+}
+
+skipTutorialPrompt() {
+    const modal = document.getElementById('tutorial-prompt');
+    if (modal) modal.remove();
+    
+    localStorage.setItem('tutorialCompleted', 'true');
 }
 
 tutorialSteps = [

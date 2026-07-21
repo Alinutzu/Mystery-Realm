@@ -3238,5 +3238,113 @@ input:checked ~ .toggle-label {
 }
 
 .tab-btn {
-    position: relative; /* Pentru a poziția badge-ul corect */
+    position: relative; /* Pentru a poziționa badge-ul corect */
+}
+
+.tutorial-prompt-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 50000;
+    animation: fadeIn 0.3s ease;
+}
+
+.tutorial-prompt-card {
+    background: var(--card-bg);
+    border: 2px solid var(--primary-color);
+    border-radius: 16px;
+    padding: 2.5rem;
+    max-width: 420px;
+    width: 90%;
+    text-align: center;
+    animation: slideUp 0.4s ease;
+}
+
+.tutorial-prompt-icon {
+    font-size: 3.5rem;
+    margin-bottom: 1rem;
+}
+
+.tutorial-prompt-card h2 {
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+    font-size: 1.4rem;
+}
+
+.tutorial-prompt-card p {
+    color: var(--text-secondary);
+    margin-bottom: 1.5rem;
+    font-size: 0.95rem;
+}
+
+.tutorial-prompt-features {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.tutorial-prompt-feature {
+    background: rgba(99, 102, 241, 0.15);
+    border: 1px solid rgba(99, 102, 241, 0.3);
+    border-radius: 8px;
+    padding: 0.6rem 1rem;
+    font-size: 0.9rem;
+    color: var(--text-primary);
+}
+
+.tutorial-prompt-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+}
+
+.tutorial-prompt-btn {
+    padding: 0.85rem 1.5rem;
+    border: none;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.tutorial-prompt-btn:hover {
+    transform: translateY(-2px);
+}
+
+.tutorial-prompt-btn:active {
+    transform: translateY(0);
+}
+
+.tutorial-prompt-yes {
+    background: var(--success-color);
+    color: white;
+    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
+}
+
+.tutorial-prompt-yes:hover {
+    box-shadow: 0 6px 20px rgba(16, 185, 129, 0.6);
+}
+
+.tutorial-prompt-no {
+    background: transparent;
+    color: var(--text-secondary);
+    border: 2px solid rgba(255, 255, 255, 0.15);
+}
+
+.tutorial-prompt-no:hover {
+    border-color: rgba(255, 255, 255, 0.3);
+    color: var(--text-primary);
+}
+
+@keyframes slideUp {
+    from { transform: translateY(30px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
 }
