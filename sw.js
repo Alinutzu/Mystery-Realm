@@ -1,4 +1,4 @@
-const CACHE_NAME = 'mystic-realms-v1';
+const CACHE_NAME = 'mystic-realms-v2';
 const ASSETS = [
   '/',
   '/index.html',
