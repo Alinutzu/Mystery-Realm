@@ -8,9 +8,9 @@ class Game {
         // ========== STATE (se salvează) ==========
         this.state = {
             energy: 0,
-            energyCap: 5000,
+            energyCap: 3000,
             mana: 0,
-            manaCap: 500,
+            manaCap: 300,
             crystals: 0,
             gems: 10,
             coins: 0,
@@ -35,11 +35,11 @@ class Game {
 },
             
             volcanoStructures: {
-                lava_forge: { level: 0, baseProduction: 5, baseCost: 500, costMultiplier: 1.15, resource: 'volcanic_energy' },
-                magma_extractor: { level: 0, baseProduction: 25, baseCost: 2500, costMultiplier: 1.15, resource: 'volcanic_energy' },
-                fire_temple: { level: 0, baseProduction: 100, baseCost: 10000, costMultiplier: 1.15, resource: 'volcanic_energy' },
-                inferno_reactor: { level: 0, baseProduction: 500, baseCost: 50000, costMultiplier: 1.15, resource: 'volcanic_energy' },
-                phoenix_nest: { level: 0, baseProduction: 2000, baseCost: 250000, costMultiplier: 1.15, resource: 'volcanic_energy' }
+                lava_forge: { level: 0, baseProduction: 3, baseCost: 700, costMultiplier: 1.15, resource: 'volcanic_energy' },
+                magma_extractor: { level: 0, baseProduction: 15, baseCost: 3500, costMultiplier: 1.15, resource: 'volcanic_energy' },
+                fire_temple: { level: 0, baseProduction: 60, baseCost: 14000, costMultiplier: 1.15, resource: 'volcanic_energy' },
+                inferno_reactor: { level: 0, baseProduction: 300, baseCost: 70000, costMultiplier: 1.15, resource: 'volcanic_energy' },
+                phoenix_nest: { level: 0, baseProduction: 1200, baseCost: 350000, costMultiplier: 1.15, resource: 'volcanic_energy' }
             },
             
             currentRealm: 'forest',
@@ -59,6 +59,9 @@ class Game {
             
             guardians: [],
             activeQuests: [],
+            weeklyQuest: null,
+            lastQuestRefresh: 0,
+            lastWeeklyRefresh: 0,
             completedQuestsToday: 0,
             dailyQuestLimit: 5,
             totalQuestsCompleted: 0,
@@ -138,7 +141,7 @@ class Game {
             maxOfflineTime: 43200000, // 12 hours
             puzzleGemReward: 5,
             questRefreshTime: 3600000,
-            ascensionRequirement: 75000,
+            ascensionRequirement: 100000,
             ascensionScaleFactor: 8
         };
         
@@ -149,8 +152,8 @@ class Game {
         name: 'Mănăstire Mistică', 
         icon: '🏛️', 
         description: 'Călugării generează energie spirituală',
-        baseProduction: 0.5,
-        baseCost: 10,
+        baseProduction: 0.3,
+        baseCost: 15,
         costMultiplier: 1.30,
         resource: 'energy'
     },
@@ -158,8 +161,8 @@ class Game {
         name: 'Fermă Magică', 
         icon: '🌾', 
         description: 'Recoltele enchanted generează putere',
-        baseProduction: 1.5,
-        baseCost: 50,
+        baseProduction: 0.8,
+        baseCost: 70,
         costMultiplier: 1.30,
         resource: 'energy'
     },
@@ -167,8 +170,8 @@ class Game {
         name: 'Laborator Alchemic', 
         icon: '⚗️', 
         description: 'Experimente magice amplifică energia',
-        baseProduction: 6,
-        baseCost: 200,
+        baseProduction: 3.5,
+        baseCost: 280,
         costMultiplier: 1.30,
         resource: 'energy'
     },
@@ -176,8 +179,8 @@ class Game {
         name: 'Turn Arcanic', 
         icon: '🗼', 
         description: 'Magii puternici invocă energie cosmică',
-        baseProduction: 22,
-        baseCost: 800,
+        baseProduction: 12,
+        baseCost: 1100,
         costMultiplier: 1.30,
         resource: 'energy'
     },
@@ -185,8 +188,8 @@ class Game {
         name: 'Portal Interdimensional', 
         icon: '🌀', 
         description: 'Energie din alte dimensiuni',
-        baseProduction: 90,
-        baseCost: 3000,
+        baseProduction: 50,
+        baseCost: 4200,
         costMultiplier: 1.30,
         resource: 'energy'
     },
@@ -194,8 +197,8 @@ class Game {
         name: 'Sanctuar Mistic', 
         icon: '⛩️', 
         description: 'Loc sacru cu putere divină',
-        baseProduction: 1,
-        baseCost: 400,
+        baseProduction: 0.5,
+        baseCost: 550,
         costMultiplier: 1.35,
         resource: 'mana'
     },
@@ -203,8 +206,8 @@ class Game {
         name: 'Altar Arcanic', 
         icon: '🔮', 
         description: 'Ritualuri mistice generează putere',
-        baseProduction: 4,
-        baseCost: 1500,
+        baseProduction: 1.5,
+        baseCost: 2000,
         costMultiplier: 1.35,
         resource: 'mana'
     }
@@ -217,7 +220,7 @@ class Game {
         description: '+25% energie per secundă',
         maxLevel: 10,
         multiplier: 1.25,
-        baseCost: 50,
+        baseCost: 75,
         costResource: 'energy'
     },
     autoCollect: { 
@@ -226,7 +229,7 @@ class Game {
         description: '+50% productie offline per nivel',
         maxLevel: 5,
         multiplier: 1.5,
-        baseCost: 200,
+        baseCost: 300,
         costResource: 'energy'
     },
     offlineBonus: { 
@@ -235,7 +238,7 @@ class Game {
         description: '+40% timp offline maxim',
         maxLevel: 5,
         multiplier: 1.4,
-        baseCost: 150,
+        baseCost: 225,
         costResource: 'energy'
     },
     gemFinder: { 
@@ -244,7 +247,7 @@ class Game {
         description: '+20% șansă gemuri din puzzle',
         maxLevel: 10,
         multiplier: 1.2,
-        baseCost: 100,
+        baseCost: 150,
         costResource: 'energy'
     },
     energyCap: { 
@@ -253,7 +256,7 @@ class Game {
         description: '+50% capacitate de energie',
         maxLevel: 20,
         multiplier: 1.5,
-        baseCost: 100,
+        baseCost: 150,
         costResource: 'energy'
     },
     manaCap: { 
@@ -262,27 +265,39 @@ class Game {
         description: '+50% capacitate de mana',
         maxLevel: 20,
         multiplier: 1.5,
-        baseCost: 100,
+        baseCost: 150,
         costResource: 'mana'
     }
 };
         
         this.guardianTemplates = [
-    { name: 'Sylvan', icon: '🧙‍♂️', rarity: 'common', bonus: 1.06 },
-    { name: 'Lyra', icon: '🧙‍♀️', rarity: 'common', bonus: 1.08 },
-    { name: 'Thorin', icon: '⚔️', rarity: 'rare', bonus: 1.15 },
-    { name: 'Aria', icon: '🏹', rarity: 'rare', bonus: 1.18 },
-    { name: 'Zephyr', icon: '🌪️', rarity: 'epic', bonus: 1.30 },
-    { name: 'Phoenix', icon: '🔥', rarity: 'epic', bonus: 1.35 },
-    { name: 'Celestia', icon: '✨', rarity: 'legendary', bonus: 1.60 },
-    { name: 'Omega', icon: '⭐', rarity: 'legendary', bonus: 1.80 }
+    { name: 'Sylvan', icon: '🧙‍♂️', rarity: 'common', bonus: 1.04 },
+    { name: 'Lyra', icon: '🧙‍♀️', rarity: 'common', bonus: 1.05 },
+    { name: 'Thorin', icon: '⚔️', rarity: 'rare', bonus: 1.10 },
+    { name: 'Aria', icon: '🏹', rarity: 'rare', bonus: 1.12 },
+    { name: 'Zephyr', icon: '🌪️', rarity: 'epic', bonus: 1.20 },
+    { name: 'Phoenix', icon: '🔥', rarity: 'epic', bonus: 1.25 },
+    { name: 'Celestia', icon: '✨', rarity: 'legendary', bonus: 1.40 },
+    { name: 'Omega', icon: '⭐', rarity: 'legendary', bonus: 1.50 }
 ];
         
         this.questTemplates = [
-            { id: 'collect_energy', name: 'Colector Energetic', icon: '⚡', description: 'Colectează {amount} energie', type: 'collect', resource: 'energy', amountBase: 500, reward: { type: 'gems', amount: 3 } },
-            { id: 'buy_structures', name: 'Constructor', icon: '🏗️', description: 'Cumpără {amount} structuri', type: 'buy', target: 'structures', amountBase: 5, reward: { type: 'mana', amount: 10 } },
-            { id: 'complete_puzzles', name: 'Maestru Puzzle', icon: '🧩', description: 'Completează {amount} puzzle-uri', type: 'complete', target: 'puzzles', amountBase: 3, reward: { type: 'gems', amount: 10 } },
-            { id: 'upgrade_buildings', name: 'Inginer', icon: '⚙️', description: 'Îmbunătățește {amount} ori', type: 'upgrade', target: 'any', amountBase: 10, reward: { type: 'gems', amount: 5 } }
+            { id: 'collect_energy', name: 'Colector Energetic', icon: '⚡', description: 'Colectează {amount} energie', type: 'collect', resource: 'energy', amountBase: 2000, reward: { type: 'gems', amount: 15 } },
+            { id: 'collect_mana', name: 'Adunător de Mana', icon: '💙', description: 'Colectează {amount} mană', type: 'collect', resource: 'mana', amountBase: 500, reward: { type: 'gems', amount: 20 } },
+            { id: 'buy_structures', name: 'Constructor', icon: '🏗️', description: 'Cumpără {amount} structuri', type: 'buy', target: 'structures', amountBase: 25, reward: { type: 'mana', amount: 50 } },
+            { id: 'complete_puzzles', name: 'Maestru Puzzle', icon: '🧩', description: 'Completează {amount} puzzle-uri', type: 'complete', target: 'puzzles', amountBase: 10, reward: { type: 'gems', amount: 25 } },
+            { id: 'upgrade_buildings', name: 'Inginer', icon: '⚙️', description: 'Îmbunătățește {amount} ori', type: 'upgrade', target: 'any', amountBase: 30, reward: { type: 'gems', amount: 15 } },
+            { id: 'defeat_boss', name: 'Vanător de Boss', icon: '🐉', description: 'Înfrângi {amount} boss-uri', type: 'defeat', target: 'bosses', amountBase: 3, reward: { type: 'gems', amount: 50, bonus: { crystals: 5 } } },
+            { id: 'collect_crystals', name: 'Miner de Cristale', icon: '💠', description: 'Colectează {amount} cristale', type: 'collect', resource: 'crystals', amountBase: 10, reward: { type: 'gems', amount: 30 } },
+            { id: 'total_clicks', name: 'Mâini Iuți', icon: '👆', description: 'Click {amount} ori', type: 'click', target: 'any', amountBase: 500, reward: { type: 'gems', amount: 10 } }
+        ];
+        
+        this.weeklyQuestTemplates = [
+            { id: 'weekly_energy', name: 'Provocarea Săptămânii', icon: '🌟', description: 'Colectează {amount} energie în 7 zile', type: 'collect', resource: 'energy', amountBase: 500000, reward: { type: 'gems', amount: 200, bonus: { crystals: 25 } } },
+            { id: 'weekly_puzzles', name: 'Maraton Puzzle', icon: '🧩', description: 'Completează {amount} puzzle-uri în 7 zile', type: 'complete', target: 'puzzles', amountBase: 50, reward: { type: 'gems', amount: 250, bonus: { crystals: 30 } } },
+            { id: 'weekly_bosses', name: 'Campanie Eroică', icon: '⚔️', description: 'Înfrângi {amount} boss-uri în 7 zile', type: 'defeat', target: 'bosses', amountBase: 15, reward: { type: 'gems', amount: 300, bonus: { crystals: 40 } } },
+            { id: 'weekly_crystals', name: 'Extracție Totală', icon: '💠', description: 'Colectează {amount} cristale în 7 zile', type: 'collect', resource: 'crystals', amountBase: 75, reward: { type: 'gems', amount: 200, bonus: { crystals: 50 } } },
+            { id: 'weekly_clicks', name: 'Degete de Foc', icon: '🔥', description: 'Click {amount} ori în 7 zile', type: 'click', target: 'any', amountBase: 5000, reward: { type: 'gems', amount: 150, bonus: { crystals: 20 } } }
         ];
         
         // ⭐ BOSS DEFINITIONS (ADAUGĂ AICI)
@@ -292,11 +307,11 @@ class Game {
                 name: 'Guardian al Pădurii',
                 icon: '🌳',
                 realm: 'forest',
-                hp: 5,
+                hp: 15,
                 difficulty: 1,
                 puzzleConfig: {
                     gridSize: 8,
-                    movesStart: 25,
+                    movesStart: 18,
                     targetScore: 800,
                     colors: ['🔴', '🔵', '🟢', '🟡', '🟣', '🟠']
                 },
@@ -313,11 +328,11 @@ class Game {
                 name: 'Sfinxul Deșertului',
                 icon: '🏜️',
                 realm: 'desert',
-                hp: 10,
+                hp: 30,
                 difficulty: 2,
                 puzzleConfig: {
-                    gridSize: 8,
-                    movesStart: 20,
+                    gridSize: 9,
+                    movesStart: 15,
                     targetScore: 1200,
                     colors: ['🔴', '🔵', '🟢', '🟡', '🟣', '🟠', '🟤']
                 },
@@ -334,12 +349,12 @@ class Game {
                 name: 'Kraken-ul Adâncurilor',
                 icon: '🌊',
                 realm: 'ocean',
-                hp: 15,
+                hp: 50,
                 difficulty: 3,
                 puzzleConfig: {
                     gridSize: 9,
-                    movesStart: 18,
-                    targetScore: 1500,
+                    movesStart: 12,
+                    targetScore: 1800,
                     colors: ['🔴', '🔵', '🟢', '🟡', '🟣', '🟠']
                 },
                 unlockRequirement: { puzzlesCompleted: 30 },
@@ -355,12 +370,12 @@ class Game {
                 name: 'Dragonul de Foc',
                 icon: '🔥',
                 realm: 'volcano',
-                hp: 20,
+                hp: 70,
                 difficulty: 4,
                 puzzleConfig: {
                     gridSize: 9,
-                    movesStart: 15,
-                    targetScore: 2000,
+                    movesStart: 10,
+                    targetScore: 2500,
                     colors: ['🔴', '🟠', '🟡', '🟣', '⚫']
                 },
                 unlockRequirement: { puzzlesCompleted: 50 },
@@ -376,12 +391,12 @@ class Game {
                 name: 'Lordul Umbrelor',
                 icon: '👹',
                 realm: 'shadow',
-                hp: 30,
+                hp: 100,
                 difficulty: 5,
                 puzzleConfig: {
                     gridSize: 10,
-                    movesStart: 12,
-                    targetScore: 3000,
+                    movesStart: 8,
+                    targetScore: 3500,
                     colors: ['⚫', '🟣', '🔵', '🔴']
                 },
                 unlockRequirement: { puzzlesCompleted: 100 },
@@ -417,8 +432,8 @@ class Game {
         // ⭐ VOLCANO STRUCTURES DATA
         this.volcanoStructureData = {
             lava_forge: { 
-                baseProduction: 5, 
-                baseCost: 500, 
+                baseProduction: 3, 
+                baseCost: 700, 
                 costMultiplier: 1.15, 
                 resource: 'volcanic_energy',
                 icon: '⚒️',
@@ -426,8 +441,8 @@ class Game {
                 description: 'Topește pietre în energie pură'
             },
             magma_extractor: { 
-                baseProduction: 25, 
-                baseCost: 2500, 
+                baseProduction: 15, 
+                baseCost: 3500, 
                 costMultiplier: 1.15, 
                 resource: 'volcanic_energy',
                 icon: '🏭',
@@ -435,8 +450,8 @@ class Game {
                 description: 'Extrage esență din adâncuri'
             },
             fire_temple: { 
-                baseProduction: 100, 
-                baseCost: 10000, 
+                baseProduction: 60, 
+                baseCost: 14000, 
                 costMultiplier: 1.15, 
                 resource: 'volcanic_energy',
                 icon: '⛩️',
@@ -444,8 +459,8 @@ class Game {
                 description: 'Sanctuar al flamelor veșnice'
             },
             inferno_reactor: { 
-                baseProduction: 500, 
-                baseCost: 50000, 
+                baseProduction: 300, 
+                baseCost: 70000, 
                 costMultiplier: 1.15, 
                 resource: 'volcanic_energy',
                 icon: '⚛️',
@@ -453,8 +468,8 @@ class Game {
                 description: 'Fuziune nucleară vulcanică'
             },
             phoenix_nest: { 
-                baseProduction: 2000, 
-                baseCost: 250000, 
+                baseProduction: 1200, 
+                baseCost: 350000, 
                 costMultiplier: 1.15, 
                 resource: 'volcanic_energy',
                 icon: '🔥',
@@ -465,11 +480,11 @@ class Game {
         
         // ⭐ FIRE GUARDIANS
         this.fireGuardianTemplates = [
-            { name: 'Ignis', icon: '🔥', rarity: 'rare', bonus: 1.20, realm: 'volcano' },
-            { name: 'Blaze', icon: '💥', rarity: 'rare', bonus: 1.25, realm: 'volcano' },
-            { name: 'Inferno', icon: '🌪️', rarity: 'epic', bonus: 1.40, realm: 'volcano' },
-            { name: 'Pyro', icon: '⚡', rarity: 'epic', bonus: 1.45, realm: 'volcano' },
-            { name: 'Ragnarok', icon: '🌋', rarity: 'legendary', bonus: 2.00, realm: 'volcano' }
+            { name: 'Ignis', icon: '🔥', rarity: 'rare', bonus: 1.15, realm: 'volcano' },
+            { name: 'Blaze', icon: '💥', rarity: 'rare', bonus: 1.18, realm: 'volcano' },
+            { name: 'Inferno', icon: '🌪️', rarity: 'epic', bonus: 1.25, realm: 'volcano' },
+            { name: 'Pyro', icon: '⚡', rarity: 'epic', bonus: 1.30, realm: 'volcano' },
+            { name: 'Ragnarok', icon: '🌋', rarity: 'legendary', bonus: 1.60, realm: 'volcano' }
         ];
         
         // ⭐ SHOP CONFIG
@@ -720,7 +735,7 @@ class Game {
             name: 'Jucător Dedicat', 
             icon: '⏰', 
             category: 'timp',
-            description: 'Joacă timp de 1 oră total', 
+            description: 'Joacă 10 sesiuni', 
             condition: () => this.state.statistics.sessionsPlayed >= 10,
             reward: { gems: 25 }
         },
@@ -746,7 +761,7 @@ class Game {
             name: 'Regele Combo', 
             icon: '🔥', 
             category: 'speciale',
-            description: 'Obține un combo de 5 în puzzle', 
+            description: 'Rezolvă un puzzle în mai puțin de 30 secunde', 
             condition: () => this.state.statistics.fastestPuzzleTime < 30,
             reward: { gems: 75 }
         },
@@ -852,7 +867,7 @@ renderVolcanoStructures() {
         const data = this.volcanoStructureData[key];
         const cost = this.getVolcanoStructureCost(key);
         const production = this.getVolcanoStructureProduction(key);
-        const canAfford = this.state.energy >= cost; // Use energy to buy volcano structures
+        const canAfford = this.state.volcanicEnergy >= cost;
         
         const milestone = this.getMilestoneInfo(structure.level);
         const milestoneText = structure.level >= 25 ? 
@@ -910,6 +925,7 @@ buyVolcanoStructure(structureKey) {
         
         this.state.statistics.totalStructuresBought++;
         this.state.statistics.totalClicks++;
+        this.updateQuestProgress('click', 'any', 1);
         this.updateFavoriteStructure(structureKey);
         
         this.calculateVolcanicEnergyPerSecond();
@@ -947,14 +963,15 @@ calculateVolcanicEnergyPerSecond() {
     
     for (let [key, structure] of Object.entries(this.state.volcanoStructures)) {
         if (structure.level > 0) {
-            volcanicTotal += structure.baseProduction * structure.level;
+            const data = this.volcanoStructureData[key];
+            volcanicTotal += data.baseProduction * structure.level;
         }
     }
     
     // Energy Boost
     const energyBoostLevel = this.state.upgrades.energyBoost.level;
     if (energyBoostLevel > 0) {
-        const multiplier = Math.pow(this.state.upgrades.energyBoost.multiplier, energyBoostLevel);
+        const multiplier = Math.pow(this.upgradeData.energyBoost.multiplier, energyBoostLevel);
         volcanicTotal *= multiplier;
     }
     
@@ -1126,6 +1143,7 @@ tutorialSteps = [
             if (this.state.gems < 100) {
                 const needed = 100 - this.state.gems;
                 this.state.gems = 100;
+                this.trackReward('gems', needed);
                 this.showToast(`🎁 Bonus tutorial: +${needed} 💎`, 'info');
                 this.updateUI();
             }
@@ -1464,6 +1482,7 @@ completeTutorial() {
     
     if (isFirstTime) {
         this.state.gems += 500;
+        this.trackReward('gems', 500);
         
         document.getElementById('tutorial-tooltip-title').textContent = '🎉 Felicitări!';
         document.getElementById('tutorial-tooltip-text').innerHTML = 
@@ -1527,13 +1546,13 @@ replayTutorial() {
     }
     
     dailyRewardsConfig = [
-        { day: 1, gems: 75, energy: 200, crystals: 0, guardian: null },
-        { day: 2, gems: 150, energy: 800, crystals: 0, guardian: null },
-        { day: 3, gems: 200, energy: 500, crystals: 2, guardian: null },
-        { day: 4, gems: 250, energy: 1500, crystals: 1, guardian: null },
-        { day: 5, gems: 400, energy: 1000, crystals: 2, guardian: 'rare' },
-        { day: 6, gems: 500, energy: 1500, crystals: 3, guardian: null },
-        { day: 7, gems: 750, energy: 3000, crystals: 8, guardian: 'epic' }
+        { day: 1, gems: 50, energy: 100, crystals: 0, guardian: null },
+        { day: 2, gems: 100, energy: 400, crystals: 0, guardian: null },
+        { day: 3, gems: 150, energy: 300, crystals: 1, guardian: null },
+        { day: 4, gems: 200, energy: 800, crystals: 1, guardian: null },
+        { day: 5, gems: 300, energy: 600, crystals: 2, guardian: 'rare' },
+        { day: 6, gems: 400, energy: 1000, crystals: 2, guardian: null },
+        { day: 7, gems: 500, energy: 1500, crystals: 5, guardian: 'epic' }
     ];
     
     checkDailyRewards() {
@@ -1653,9 +1672,9 @@ replayTutorial() {
         
         const reward = this.dailyRewardsConfig[streak];
         
-        if (reward.gems > 0) this.state.gems += reward.gems;
+        if (reward.gems > 0) { this.state.gems += reward.gems; this.trackReward('gems', reward.gems); }
         if (reward.energy > 0) this.state.energy += reward.energy;
-        if (reward.crystals > 0) this.state.crystals += reward.crystals;
+        if (reward.crystals > 0) { this.state.crystals += reward.crystals; this.trackReward('crystals', reward.crystals); }
         
         if (reward.guardian) {
             const rarity = reward.guardian;
@@ -1761,6 +1780,9 @@ replayTutorial() {
         this.generateQuests();
     }
     
+    this.checkDailyQuestRefresh();
+    this.checkWeeklyQuestRefresh();
+    
     this.checkAchievements();
     this.checkBossUnlocks();
     this.initTutorial();
@@ -1845,6 +1867,9 @@ replayTutorial() {
     const now = Date.now();
     const deltaTime = (now - this.state.lastTick) / 1000;
     
+    // Track playtime
+    this.state.totalPlayTime += deltaTime * 1000;
+    
     const energyGained = this.state.energyPerSecond * deltaTime;
     const manaGained = this.state.manaPerSecond * deltaTime;
     
@@ -1879,6 +1904,7 @@ replayTutorial() {
     
     this.state.lifetimeEnergy += energyGained;
     this.updateQuestProgress('collect', 'energy', energyGained);
+    this.updateQuestProgress('collect', 'mana', manaGained);
     
     // ⭐ TRACK highest production
     if (this.state.energyPerSecond > this.state.statistics.highestEnergyPerSecond) {
@@ -1900,10 +1926,16 @@ replayTutorial() {
         this.lastAchievementCheck = now;
     }
     
+    if (!this.lastQuestRefreshCheck || now - this.lastQuestRefreshCheck > 60000) {
+        this.checkDailyQuestRefresh();
+        this.checkWeeklyQuestRefresh();
+        this.lastQuestRefreshCheck = now;
+    }
+    
     // Auto-features (dacă există)
-    if (this.autoBuyStructures) {
+    if (this.state.autoFeatures.autoBuyStructures.enabled) {
         if (!this.lastAutoBuy || now - this.lastAutoBuy > 2000) {
-            this.autoBuyStructures();
+            this.autoBuyCheapestStructure();
             this.lastAutoBuy = now;
         }
     }
@@ -1990,8 +2022,8 @@ if (energyBoostLevel > 0) {
 }
     
     calculateResourceCaps() {
-    let energyCap = 25000;
-    let manaCap = 5000;
+    let energyCap = 15000;
+    let manaCap = 3000;
     
     if (this.state.upgrades.energyCap && this.state.upgrades.energyCap.level > 0) {
         const data = this.upgradeData.energyCap;  // ← ADAUGĂ ASTA
@@ -2158,6 +2190,7 @@ getMilestoneInfo(level) {
         
         this.state.statistics.totalStructuresBought++;
         this.state.statistics.totalClicks++;
+        this.updateQuestProgress('click', 'any', 1);
         this.updateFavoriteStructure(structureKey);
         
         this.calculateEnergyPerSecond();
@@ -2273,6 +2306,7 @@ getMilestoneInfo(level) {
         }
         
         this.state.upgrades[upgradeKey].level++;
+        this.state.statistics.totalUpgradesBought++;
         
         if (typeof sessionTracker !== 'undefined') {
             sessionTracker.upgradeBought(upgradeKey, this.state.upgrades[upgradeKey].level, cost, data.costResource);
@@ -2379,6 +2413,7 @@ getMilestoneInfo(level) {
     // ⭐ TRACK
     this.state.statistics.totalGemsSpent += cost;
     this.state.statistics.totalClicks++;
+    this.updateQuestProgress('click', 'any', 1);
     
     // Determine rarity
 const random = Math.random();
@@ -2492,7 +2527,68 @@ else rarity = 'legendary';                  // 5% șansă
             this.state.activeQuests.push(quest);
         }
         
+        this.state.lastQuestRefresh = Date.now();
         this.renderQuests();
+    }
+    
+    checkDailyQuestRefresh() {
+        const now = Date.now();
+        const lastRefresh = this.state.lastQuestRefresh || 0;
+        
+        if (lastRefresh === 0) {
+            this.generateQuests();
+            return;
+        }
+        
+        const lastDate = new Date(lastRefresh).toDateString();
+        const today = new Date(now).toDateString();
+        
+        if (lastDate !== today) {
+            this.state.completedQuestsToday = 0;
+            this.generateQuests();
+            this.showToast('📜 Quest-uri noi disponibile!', 'info');
+        }
+    }
+    
+    generateWeeklyQuest() {
+        const templates = this.weeklyQuestTemplates;
+        const template = templates[Math.floor(Math.random() * templates.length)];
+        const scaleFactor = 1 + (this.state.ascensionLevel * 0.5);
+        const amount = Math.floor(template.amountBase * scaleFactor);
+        
+        this.state.weeklyQuest = {
+            ...template,
+            amount: amount,
+            progress: 0,
+            completed: false,
+            expiresAt: Date.now() + (7 * 24 * 60 * 60 * 1000)
+        };
+        
+        this.state.lastWeeklyRefresh = Date.now();
+    }
+    
+    checkWeeklyQuestRefresh() {
+        const now = Date.now();
+        
+        if (!this.state.weeklyQuest) {
+            this.generateWeeklyQuest();
+            return;
+        }
+        
+        if (now > this.state.weeklyQuest.expiresAt) {
+            if (!this.state.weeklyQuest.completed) {
+                this.showToast('⚠️ Quest-ul săptămânal a expirat!', 'warning');
+            }
+            this.generateWeeklyQuest();
+        }
+    }
+    
+    getQuestTimeUntilRefresh() {
+        const now = new Date();
+        const tomorrow = new Date(now);
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        tomorrow.setHours(0, 0, 0, 0);
+        return tomorrow - now;
     }
     
     renderQuests() {
@@ -2504,7 +2600,9 @@ else rarity = 'legendary';                  // 5% șansă
             questSection.className = 'quests-section';
             questSection.innerHTML = `
                 <h2 style="text-align: center; margin: 2rem 0 1rem;">📜 Quest-uri Active</h2>
+                <div class="quest-refresh-timer"></div>
                 <div class="quests-container"></div>
+                <div class="weekly-quest-section"></div>
             `;
             realmTab.insertBefore(questSection, realmTab.querySelector('.structures-grid'));
             container = document.querySelector('.quests-container');
@@ -2512,44 +2610,100 @@ else rarity = 'legendary';                  // 5% șansă
         
         container.innerHTML = '';
         
-        if (this.state.activeQuests.length === 0) {
-            container.innerHTML = '<p style="text-align: center; color: var(--text-secondary); padding: 2rem;">Nu ai quest-uri active</p>';
-            return;
+        // Refresh timer
+        const timerEl = document.querySelector('.quest-refresh-timer');
+        if (timerEl) {
+            const timeLeft = this.getQuestTimeUntilRefresh();
+            const hours = Math.floor(timeLeft / 3600000);
+            const mins = Math.floor((timeLeft % 3600000) / 60000);
+            timerEl.innerHTML = `<p style="text-align:center; color:var(--text-secondary); font-size:0.85rem; margin-bottom:1rem;">⚡ Quest-uri noi în: ${hours}h ${mins}m</p>`;
         }
         
-        for (let quest of this.state.activeQuests) {
-            const progress = Math.min(quest.progress, quest.amount);
-            const percentage = (progress / quest.amount) * 100;
-            const description = quest.description.replace('{amount}', quest.amount);
-            
-            const card = document.createElement('div');
-            card.className = `quest-card ${quest.completed ? 'completed' : ''}`;
-            card.dataset.questId = quest.id;
-            card.innerHTML = `
-                <div class="quest-header">
-                    <span class="quest-icon">${quest.icon}</span>
-                    <div class="quest-info">
-                        <h4>${quest.name}</h4>
-                        <p>${description}</p>
+        if (this.state.activeQuests.length === 0) {
+            container.innerHTML = '<p style="text-align: center; color: var(--text-secondary); padding: 2rem;">Nu ai quest-uri active</p>';
+        } else {
+            for (let quest of this.state.activeQuests) {
+                const progress = Math.min(quest.progress, quest.amount);
+                const percentage = (progress / quest.amount) * 100;
+                const description = quest.description.replace('{amount}', quest.amount);
+                
+                const card = document.createElement('div');
+                card.className = `quest-card ${quest.completed ? 'completed' : ''}`;
+                card.dataset.questId = quest.id;
+                card.innerHTML = `
+                    <div class="quest-header">
+                        <span class="quest-icon">${quest.icon}</span>
+                        <div class="quest-info">
+                            <h4>${quest.name}</h4>
+                            <p>${description}</p>
+                        </div>
                     </div>
-                </div>
-                <div class="quest-progress">
-                    <div class="progress-bar">
-                        <div class="progress-fill" style="width: ${percentage}%"></div>
+                    <div class="quest-progress">
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${percentage}%"></div>
+                        </div>
+                        <span class="progress-text">${this.formatNumber(progress)} / ${this.formatNumber(quest.amount)}</span>
                     </div>
-                    <span class="progress-text">${this.formatNumber(progress)} / ${this.formatNumber(quest.amount)}</span>
-                </div>
-                <div class="quest-reward">
-                    Recompensă: ${this.formatReward(quest.reward)}
-                </div>
-                ${quest.completed ? 
-                    '<button class="claim-btn" onclick="game.claimQuest(\'' + quest.id + '\')">Revendică</button>' :
-                    '<button class="claim-btn" disabled>În progres...</button>'
-                }
-            `;
-            
-            container.appendChild(card);
+                    <div class="quest-reward">
+                        Recompensă: ${this.formatReward(quest.reward)}
+                    </div>
+                    ${quest.completed ? 
+                        '<button class="claim-btn" onclick="game.claimQuest(\'' + quest.id + '\')">Revendică</button>' :
+                        '<button class="claim-btn" disabled>În progres...</button>'
+                    }
+                `;
+                
+                container.appendChild(card);
+            }
         }
+        
+        // Weekly quest section
+        this.renderWeeklyQuest();
+    }
+    
+    renderWeeklyQuest() {
+        const section = document.querySelector('.weekly-quest-section');
+        if (!section) return;
+        section.innerHTML = '';
+        
+        if (!this.state.weeklyQuest) return;
+        
+        const wq = this.state.weeklyQuest;
+        const progress = Math.min(wq.progress, wq.amount);
+        const percentage = (progress / wq.amount) * 100;
+        const description = wq.description.replace('{amount}', this.formatNumber(wq.amount));
+        const timeLeft = wq.expiresAt - Date.now();
+        const daysLeft = Math.floor(timeLeft / 86400000);
+        const hoursLeft = Math.floor((timeLeft % 86400000) / 3600000);
+        
+        const card = document.createElement('div');
+        card.className = `quest-card weekly-quest ${wq.completed ? 'completed' : ''}`;
+        card.style.cssText = 'border: 2px solid #fbbf24; background: linear-gradient(135deg, rgba(251,191,36,0.1), rgba(245,158,11,0.05));';
+        card.innerHTML = `
+            <div class="quest-header">
+                <span class="quest-icon" style="font-size:2.5rem;">${wq.icon}</span>
+                <div class="quest-info">
+                    <h4 style="color:#fbbf24;">${wq.name}</h4>
+                    <p>${description}</p>
+                    <p style="font-size:0.75rem; color:#f59e0b; margin-top:4px;">⏰ Expiră în: ${daysLeft}z ${hoursLeft}h</p>
+                </div>
+            </div>
+            <div class="quest-progress">
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: ${percentage}%; background: linear-gradient(90deg, #f59e0b, #fbbf24);"></div>
+                </div>
+                <span class="progress-text">${this.formatNumber(progress)} / ${this.formatNumber(wq.amount)}</span>
+            </div>
+            <div class="quest-reward">
+                Recompensă: ${this.formatReward(wq.reward)}
+            </div>
+            ${wq.completed ? 
+                '<button class="claim-btn" style="background:linear-gradient(135deg,#f59e0b,#fbbf24);" onclick="game.claimWeeklyQuest()">Revendică 🌟</button>' :
+                '<button class="claim-btn" disabled>În progres...</button>'
+            }
+        `;
+        
+        section.appendChild(card);
     }
     
     formatReward(reward) {
@@ -2560,7 +2714,22 @@ else rarity = 'legendary';                  // 5% șansă
             crystals: '💠'
         };
         
-        return `${reward.amount} ${icons[reward.type] || reward.type}`;
+        let parts = [];
+        
+        // Primary reward
+        if (reward.type && reward.amount) {
+            parts.push(`${reward.amount} ${icons[reward.type] || reward.type}`);
+        }
+        
+        // Bonus rewards
+        if (reward.bonus) {
+            if (reward.bonus.gems) parts.push(`${reward.bonus.gems} 💎`);
+            if (reward.bonus.crystals) parts.push(`${reward.bonus.crystals} 💠`);
+            if (reward.bonus.energy) parts.push(`${reward.bonus.energy} ⚡`);
+            if (reward.bonus.mana) parts.push(`${reward.bonus.mana} 💙`);
+        }
+        
+        return parts.length > 0 ? parts.join(' + ') : '???';
     }
     
     updateQuestUI() {
@@ -2573,6 +2742,20 @@ else rarity = 'legendary';                  // 5% șansă
             const text = card.querySelector('.progress-text');
             if (fill) fill.style.width = percentage + '%';
             if (text) text.textContent = `${this.formatNumber(progress)} / ${this.formatNumber(quest.amount)}`;
+        }
+        
+        // Update weekly quest progress display
+        if (this.state.weeklyQuest && !this.state.weeklyQuest.completed) {
+            const wqCard = document.querySelector('.weekly-quest');
+            if (wqCard) {
+                const wq = this.state.weeklyQuest;
+                const progress = Math.min(wq.progress, wq.amount);
+                const percentage = (progress / wq.amount) * 100;
+                const fill = wqCard.querySelector('.progress-fill');
+                const text = wqCard.querySelector('.progress-text');
+                if (fill) fill.style.width = percentage + '%';
+                if (text) text.textContent = `${this.formatNumber(progress)} / ${this.formatNumber(wq.amount)}`;
+            }
         }
     }
     
@@ -2591,6 +2774,23 @@ else rarity = 'legendary';                  // 5% șansă
                         quest.completed = true;
                         this.showToast(`✅ Quest completat: ${quest.name}`, 'success');
                         completed = true;
+                    }
+                }
+            }
+        }
+        
+        // Update weekly quest
+        if (this.state.weeklyQuest && !this.state.weeklyQuest.completed) {
+            const wq = this.state.weeklyQuest;
+            if (wq.type === type) {
+                if (!wq.target || wq.target === target || wq.target === 'any') {
+                    if (wq.resource && wq.resource !== target) {} else {
+                        wq.progress += amount;
+                        if (wq.progress >= wq.amount) {
+                            wq.completed = true;
+                            this.showToast(`🌟 Quest săptămânal completat!`, 'success');
+                            completed = true;
+                        }
                     }
                 }
             }
@@ -2617,19 +2817,22 @@ else rarity = 'legendary';                  // 5% șansă
     
     const reward = quest.reward;
     
-    switch(reward.type) {
-        case 'gems':
-            this.state.gems += reward.amount;
-            break;
-        case 'mana':
-            this.state.mana = Math.min(this.state.mana + reward.amount, this.state.manaCap);
-            break;
-        case 'energy':
-            this.state.energy += reward.amount; // Permite peste CAP
-            break;
-        case 'crystals':
-            this.state.crystals += reward.amount;
-            break;
+    // Primary reward
+    if (reward.type && reward.amount) {
+        switch(reward.type) {
+            case 'gems': this.state.gems += reward.amount; this.trackReward('gems', reward.amount); break;
+            case 'mana': this.state.mana = Math.min(this.state.mana + reward.amount, this.state.manaCap); break;
+            case 'energy': this.state.energy += reward.amount; break;
+            case 'crystals': this.state.crystals += reward.amount; this.trackReward('crystals', reward.amount); break;
+        }
+    }
+    
+    // Bonus rewards (multi-reward)
+    if (reward.bonus) {
+        if (reward.bonus.gems) { this.state.gems += reward.bonus.gems; this.trackReward('gems', reward.bonus.gems); }
+        if (reward.bonus.crystals) { this.state.crystals += reward.bonus.crystals; this.trackReward('crystals', reward.bonus.crystals); }
+        if (reward.bonus.energy) this.state.energy += reward.bonus.energy;
+        if (reward.bonus.mana) this.state.mana = Math.min(this.state.mana + reward.bonus.mana, this.state.manaCap);
     }
     
     this.showToast(`🎁 Ai primit: ${this.formatReward(reward)}`, 'success');
@@ -2667,12 +2870,51 @@ else rarity = 'legendary';                  // 5% șansă
     this.saveGame();
 }
 
+claimWeeklyQuest() {
+    const wq = this.state.weeklyQuest;
+    if (!wq || !wq.completed) return;
+    
+    soundManager.playQuestComplete();
+    
+    const reward = wq.reward;
+    
+    // Primary reward
+    if (reward.type && reward.amount) {
+        switch(reward.type) {
+            case 'gems': this.state.gems += reward.amount; this.trackReward('gems', reward.amount); break;
+            case 'mana': this.state.mana = Math.min(this.state.mana + reward.amount, this.state.manaCap); break;
+            case 'energy': this.state.energy += reward.amount; break;
+            case 'crystals': this.state.crystals += reward.amount; this.trackReward('crystals', reward.amount); break;
+        }
+    }
+    
+    // Bonus rewards
+    if (reward.bonus) {
+        if (reward.bonus.gems) { this.state.gems += reward.bonus.gems; this.trackReward('gems', reward.bonus.gems); }
+        if (reward.bonus.crystals) { this.state.crystals += reward.bonus.crystals; this.trackReward('crystals', reward.bonus.crystals); }
+        if (reward.bonus.energy) this.state.energy += reward.bonus.energy;
+        if (reward.bonus.mana) this.state.mana = Math.min(this.state.mana + reward.bonus.mana, this.state.manaCap);
+    }
+    
+    this.showToast(`🌟 ${this.formatReward(reward)}`, 'success');
+    
+    particleSystem.burst(window.innerWidth / 2, window.innerHeight / 2, 40, '🌟');
+    
+    this.state.weeklyQuest = null;
+    this.generateWeeklyQuest();
+    
+    this.renderQuests();
+    this.updateUI();
+    this.saveGame();
+}
+
     checkAchievements() {
     for (let [key, achievement] of Object.entries(this.achievementDefinitions)) {
         const state = this.state.achievements[key];
         
         if (!state.unlocked && achievement.condition()) {
             state.unlocked = true;
+            this.state.statistics.totalAchievementsUnlocked++;
             this.showAchievementUnlock(key, achievement);
         }
     }
@@ -2750,9 +2992,11 @@ claimAchievement(key) {
         
         if (achievement.reward.gems) {
             this.state.gems += achievement.reward.gems;
+            this.trackReward('gems', achievement.reward.gems);
         }
         if (achievement.reward.crystals) {
             this.state.crystals += achievement.reward.crystals;
+            this.trackReward('crystals', achievement.reward.crystals);
         }
         if (achievement.reward.energy) {
             this.state.energy += achievement.reward.energy;
@@ -2766,10 +3010,14 @@ claimAchievement(key) {
         this.saveGame();
         
         // Achievement claim effect
-        const btn = event.target;
-        const rect = btn.getBoundingClientRect();
-        const x = rect.left + rect.width / 2;
-        const y = rect.top + rect.height / 2;
+        let x = window.innerWidth / 2;
+        let y = window.innerHeight / 2;
+        if (typeof event !== 'undefined' && event && event.target) {
+            const btn = event.target;
+            const rect = btn.getBoundingClientRect();
+            x = rect.left + rect.width / 2;
+            y = rect.top + rect.height / 2;
+        }
         
         particleSystem.burst(x, y, 25, '🏆');
         particleSystem.floatingNumber(x, y - 40, `+${achievement.reward.gems || 0} 💎`, '#fbbf24');
@@ -3037,6 +3285,11 @@ defeatBoss(boss, bossState) {
     this.state.gems += boss.rewards.gems;
     this.state.crystals += boss.rewards.crystals;
     this.state.energy += boss.rewards.energy;
+    this.trackReward('gems', boss.rewards.gems);
+    this.trackReward('crystals', boss.rewards.crystals);
+    
+    this.state.statistics.totalBossesDefeated++;
+    this.updateQuestProgress('defeat', 'bosses', 1);
     
     if (boss.rewards.guaranteedGuardian) {
         const rarity = boss.rewards.guaranteedGuardian;
@@ -3198,8 +3451,8 @@ showBossVictory(boss) {
     }
     
     // Reducere offline - 60% din producție (base)
-    const energyEarned = Math.floor(energyPerSecond * offlineSeconds * 0.6);
-    const manaEarned = Math.floor(manaPerSecond * offlineSeconds * 0.6);
+    const energyEarned = Math.floor(energyPerSecond * offlineSeconds * 0.4);
+    const manaEarned = Math.floor(manaPerSecond * offlineSeconds * 0.4);
     
     this.state.energy = Math.min(this.state.energy + energyEarned, this.state.energyCap);
     this.state.mana = Math.min(this.state.mana + manaEarned, this.state.manaCap);
@@ -3363,6 +3616,10 @@ if (saveData.state.totalPlayTime === undefined) {
 if (saveData.state.autoBuyThreshold === undefined) {
     saveData.state.autoBuyThreshold = 0.8;
 }
+
+if (!saveData.state.weeklyQuest) saveData.state.weeklyQuest = null;
+if (saveData.state.lastQuestRefresh === undefined) saveData.state.lastQuestRefresh = 0;
+if (saveData.state.lastWeeklyRefresh === undefined) saveData.state.lastWeeklyRefresh = 0;
 
             if (!saveData.state.volcanoStructures) {
                 saveData.state.volcanoStructures = {
@@ -3638,6 +3895,21 @@ getAutoFeatureDescription(key) {
     return descriptions[key] || '';
 }
 
+// Auto-buy: find cheapest affordable structure
+autoBuyCheapestStructure() {
+    if (!this.state.autoFeatures.autoBuyStructures.enabled) return;
+    let cheapestKey = null;
+    let cheapestCost = Infinity;
+    for (const [key] of Object.entries(this.state.structures)) {
+        const cost = this.getStructureCost(key);
+        if (cost < cheapestCost && this.state.energy >= cost) {
+            cheapestCost = cost;
+            cheapestKey = key;
+        }
+    }
+    if (cheapestKey) this.autobuyStructure(cheapestKey);
+}
+
 // Auto-buy logic
 autobuyStructure(structureKey) {
     const cost = this.getStructureCost(structureKey);
@@ -3650,6 +3922,7 @@ autobuyStructure(structureKey) {
         
         this.state.statistics.totalStructuresBought++;
         this.state.statistics.totalClicks++;
+        this.updateQuestProgress('click', 'any', 1);
         this.updateFavoriteStructure(structureKey);
         
         this.calculateEnergyPerSecond();
@@ -3713,12 +3986,12 @@ autoPuzzlePlay() {
     // Simulate puzzle completion
     const simulatedScore = Math.floor(Math.random() * 200) + 150; // 150-350 score
     
-    if (simulatedScore >= this.puzzle.config.targetScore) {
+    if (simulatedScore >= this.puzzle.state.target) {
         this.puzzle.state.score = simulatedScore;
         this.puzzle.gameWon();
     } else {
         // Failed, try again next interval
-        this.showToast(`🤖 Auto-Puzzle: ${simulatedScore}/${this.puzzle.config.targetScore}`, 'info');
+        this.showToast(`🤖 Auto-Puzzle: ${simulatedScore}/${this.puzzle.state.target}`, 'info');
     }
 }
 
@@ -4376,6 +4649,7 @@ completeMockPurchase(packageId) {
     setTimeout(() => {
         // Give rewards
         this.state.gems += pkg.gems;
+        this.trackReward('gems', pkg.gems);
         
         if (pkg.bonus.energy) {
             this.state.energy += pkg.bonus.energy;
@@ -4383,6 +4657,7 @@ completeMockPurchase(packageId) {
         
         if (pkg.bonus.crystals) {
             this.state.crystals += pkg.bonus.crystals;
+            this.trackReward('crystals', pkg.bonus.crystals);
         }
         
         if (pkg.bonus.guardian) {
@@ -4623,6 +4898,7 @@ completeAdWatch(rewardType) {
             
         case 'free_gems':
             this.state.gems += 50;
+            this.trackReward('gems', 50);
             rewardText = '💎 +50 Gems!';
             particleSystem.burst(window.innerWidth / 2, window.innerHeight / 2, 40, '💎');
             break;
@@ -4652,12 +4928,14 @@ completeAdWatch(rewardType) {
             
             if (reward.type === 'gems') {
                 this.state.gems += reward.amount;
+                this.trackReward('gems', reward.amount);
                 rewardText = `💎 +${reward.amount} Gems!`;
             } else if (reward.type === 'energy') {
                 this.state.energy += reward.amount;
                 rewardText = `⚡ +${this.formatNumber(reward.amount)} Energy!`;
             } else if (reward.type === 'crystals') {
                 this.state.crystals += reward.amount;
+                this.trackReward('crystals', reward.amount);
                 rewardText = `💠 +${reward.amount} Crystals!`;
             }
             
@@ -5218,6 +5496,11 @@ confirmReset() {
         ascendBtn.style.background = canAscend ? 'linear-gradient(45deg, #f59e0b, #fbbf24)' : '';
     }
     
+    trackReward(type, amount) {
+        if (type === 'gems') this.state.statistics.totalGemsEarned += amount;
+        if (type === 'crystals') this.state.statistics.totalCrystalsEarned += amount;
+    }
+    
     formatNumber(num) {
         if (num >= 1000000000) return parseFloat((num / 1000000000).toFixed(2)) + 'B';
         if (num >= 1000000) return parseFloat((num / 1000000).toFixed(2)) + 'M';
@@ -5262,8 +5545,8 @@ class PuzzleGame {
         this.config = {
             gridSize: 8,
             colors: ['🔴', '🔵', '🟢', '🟡', '🟣', '🟠'],
-            movesStart: 15,
-            targetScore: 300,
+            movesStart: 12,
+            targetScore: 400,
             scorePerMatch: 10,
             comboMultiplier: 1.25,
             gemReward: 5
@@ -5341,7 +5624,7 @@ exitBossBattle() {
         if (!this.isBossBattle) {
             const puzzlesCompleted = this.game.state.puzzleStats.totalCompleted;
             this.state.moves = Math.max(8, 15 - Math.floor(puzzlesCompleted / 5));
-            this.state.target = 300 + (puzzlesCompleted * 15);
+            this.state.target = 400 + (puzzlesCompleted * 25);
         } else {
             this.state.moves = this.config.movesStart;
             this.state.target = this.config.targetScore;
@@ -5489,6 +5772,9 @@ exitBossBattle() {
             }
             
             this.state.combo++;
+            
+            // Track combo for quests
+            this.game.updateQuestProgress('combo', 'puzzle', 1);
             
             // Scoring per group: match-3=30, match-4=60, match-5+=100
             let baseScore = 0;
@@ -5662,8 +5948,8 @@ exitBossBattle() {
         if (this.state.score >= this.state.target) {
             this.gameWon();
         } else if (this.state.moves <= 0) {
-            oundManager.playReward(); // ← ADĂUGAT
-    setTimeout(() => soundManager.playCoins(), 200);
+            soundManager.playReward();
+            setTimeout(() => soundManager.playCoins(), 200);
             this.gameLost();
         }
     }
@@ -5718,6 +6004,7 @@ exitBossBattle() {
     if (this.pendingRewards) {
         this.game.state.gems += this.pendingRewards.gems;
         this.game.state.energy += this.pendingRewards.energy;
+        this.game.trackReward('gems', this.pendingRewards.gems);
         
         this.game.state.puzzleStats.gemsEarned += this.pendingRewards.gems;
         this.game.updateUI();
