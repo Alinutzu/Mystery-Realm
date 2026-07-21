@@ -2572,6 +2572,7 @@ else rarity = 'legendary';                  // 5% șansă
         
         if (!this.state.weeklyQuest) {
             this.generateWeeklyQuest();
+            this.renderQuests();
             return;
         }
         
@@ -2580,6 +2581,7 @@ else rarity = 'legendary';                  // 5% șansă
                 this.showToast('⚠️ Quest-ul săptămânal a expirat!', 'warning');
             }
             this.generateWeeklyQuest();
+            this.renderQuests();
         }
     }
     
