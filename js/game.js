@@ -1249,16 +1249,28 @@ tutorialNext() {
 }
 
 skipTutorial() {
-    if (confirm('Ești sigur că vrei să sari tutorialul? Nu vei primi recompensa de 500 gemuri!')) {
+    const modal = document.createElement('div');
+    modal.className = 'confirm-modal';
+    modal.innerHTML = `
+        <div class="confirm-content">
+            <h2>⚠️ Sari peste tutorial?</h2>
+            <p>Vei pierde recompensa de <strong>500 💎 gemuri</strong>!</p>
+            <p>Ești sigur că vrei să sari?</p>
+            <div class="confirm-buttons">
+                <button class="cancel-btn" onclick="this.closest('.confirm-modal').remove()">Înapoi</button>
+                <button class="confirm-btn danger-btn" id="skip-tutorial-confirm">Da, sare</button>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(modal);
+
+    document.getElementById('skip-tutorial-confirm').addEventListener('click', () => {
+        modal.remove();
         this.closeTutorial();
         soundManager.playError();
-        
         localStorage.setItem('tutorialCompleted', 'true');
-        
-        setTimeout(() => {
-            this.checkDailyRewards();
-        }, 500);
-    }
+        setTimeout(() => this.checkDailyRewards(), 500);
+    });
 }
 
 completeTutorial() {

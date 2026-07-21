@@ -1554,7 +1554,7 @@ input:checked ~ .toggle-label {
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 11000;
+    z-index: 200000;
     animation: fadeIn 0.3s;
 }
 
@@ -2691,30 +2691,21 @@ input:checked ~ .toggle-label {
     border-right: none;
 }
 
-/* Close button */
-.tutorial-close {
+/* Skip link (discreet text) */
+.tutorial-skip-link {
     position: absolute;
-    top: 8px;
-    right: 8px;
-    background: rgba(255, 100, 100, 0.3);
-    border: 1px solid rgba(255, 100, 100, 0.6);
-    color: white;
-    width: 28px;
-    height: 28px;
-    border-radius: 50%;
+    bottom: 8px;
+    right: 12px;
+    color: rgba(255, 255, 255, 0.4);
+    font-size: 12px;
     cursor: pointer;
-    font-size: 16px;
-    font-weight: bold;
-    transition: all 0.3s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    transition: color 0.3s;
     pointer-events: all;
+    user-select: none;
 }
 
-.tutorial-close:hover {
-    background: rgba(255, 100, 100, 0.6);
-    transform: rotate(90deg);
+.tutorial-skip-link:hover {
+    color: rgba(255, 255, 255, 0.8);
 }
 
 /* Content */
@@ -3048,24 +3039,20 @@ input:checked ~ .toggle-label {
     transition: all 0.3s ease;
 }
 
-.tutorial-close {
+.tutorial-skip-link {
     position: absolute;
-    top: 10px;
-    right: 10px;
-    background: rgba(255, 100, 100, 0.8);
-    border: none;
-    color: white;
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
+    bottom: 8px;
+    right: 12px;
+    color: rgba(255, 255, 255, 0.4);
+    font-size: 12px;
     cursor: pointer;
-    font-size: 1.2rem;
-    transition: all 0.2s;
+    transition: color 0.3s;
+    pointer-events: all;
+    user-select: none;
 }
 
-.tutorial-close:hover {
-    background: rgba(255, 50, 50, 1);
-    transform: scale(1.1);
+.tutorial-skip-link:hover {
+    color: rgba(255, 255, 255, 0.8);
 }
 
 .tutorial-tooltip-content {
