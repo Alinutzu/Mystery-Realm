@@ -8,9 +8,9 @@ class Game {
         // ========== STATE (se salvează) ==========
         this.state = {
             energy: 0,
-            energyCap: 1000,
+            energyCap: 5000,
             mana: 0,
-            manaCap: 100,
+            manaCap: 500,
             crystals: 0,
             gems: 10,
             coins: 0,
@@ -35,11 +35,11 @@ class Game {
 },
             
             volcanoStructures: {
-                lava_forge: { level: 0, baseProduction: 5, baseCost: 500, costMultiplier: 1.2, resource: 'volcanic_energy' },
-                magma_extractor: { level: 0, baseProduction: 25, baseCost: 2500, costMultiplier: 1.25, resource: 'volcanic_energy' },
-                fire_temple: { level: 0, baseProduction: 100, baseCost: 10000, costMultiplier: 1.3, resource: 'volcanic_energy' },
-                inferno_reactor: { level: 0, baseProduction: 500, baseCost: 50000, costMultiplier: 1.35, resource: 'volcanic_energy' },
-                phoenix_nest: { level: 0, baseProduction: 2000, baseCost: 250000, costMultiplier: 1.4, resource: 'volcanic_energy' }
+                lava_forge: { level: 0, baseProduction: 5, baseCost: 500, costMultiplier: 1.15, resource: 'volcanic_energy' },
+                magma_extractor: { level: 0, baseProduction: 25, baseCost: 2500, costMultiplier: 1.15, resource: 'volcanic_energy' },
+                fire_temple: { level: 0, baseProduction: 100, baseCost: 10000, costMultiplier: 1.15, resource: 'volcanic_energy' },
+                inferno_reactor: { level: 0, baseProduction: 500, baseCost: 50000, costMultiplier: 1.15, resource: 'volcanic_energy' },
+                phoenix_nest: { level: 0, baseProduction: 2000, baseCost: 250000, costMultiplier: 1.15, resource: 'volcanic_energy' }
             },
             
             currentRealm: 'forest',
@@ -72,7 +72,7 @@ class Game {
                 autoBuyStructures: { enabled: false, unlocked: false, cost: 500 },
                 autoClaimQuests: { enabled: false, unlocked: false, cost: 300 },
                 autoCollectOffline: { enabled: true, unlocked: true, cost: 0 },
-                autoPuzzle: { enabled: false, unlocked: false, cost: 2000 }
+                autoPuzzle: { enabled: false, unlocked: false, cost: 1000 }
             },
             autoBuyThreshold: 0.8,
             
@@ -135,10 +135,11 @@ class Game {
         this.config = {
             saveInterval: 10000,
             tickRate: 100,
-            maxOfflineTime: 28800000,
+            maxOfflineTime: 43200000, // 12 hours
             puzzleGemReward: 5,
             questRefreshTime: 3600000,
-            ascensionRequirement: 100000
+            ascensionRequirement: 75000,
+            ascensionScaleFactor: 8
         };
         
         // ========== DEFINITIONS (template-uri fixe) ==========
@@ -150,61 +151,61 @@ class Game {
         description: 'Călugării generează energie spirituală',
         baseProduction: 0.5,
         baseCost: 10,
-        costMultiplier: 1.15,
+        costMultiplier: 1.30,
         resource: 'energy'
     },
     farm: { 
         name: 'Fermă Magică', 
         icon: '🌾', 
         description: 'Recoltele enchanted generează putere',
-        baseProduction: 2,
+        baseProduction: 1.5,
         baseCost: 50,
-        costMultiplier: 1.2,
+        costMultiplier: 1.30,
         resource: 'energy'
     },
     laboratory: { 
         name: 'Laborator Alchemic', 
         icon: '⚗️', 
         description: 'Experimente magice amplifică energia',
-        baseProduction: 8,
+        baseProduction: 6,
         baseCost: 200,
-        costMultiplier: 1.25,
+        costMultiplier: 1.30,
         resource: 'energy'
     },
     tower: { 
         name: 'Turn Arcanic', 
         icon: '🗼', 
         description: 'Magii puternici invocă energie cosmică',
-        baseProduction: 30,
-        baseCost: 1000,
-        costMultiplier: 1.3,
+        baseProduction: 22,
+        baseCost: 800,
+        costMultiplier: 1.30,
         resource: 'energy'
     },
     portal: { 
         name: 'Portal Interdimensional', 
         icon: '🌀', 
         description: 'Energie din alte dimensiuni',
-        baseProduction: 100,
-        baseCost: 5000,
-        costMultiplier: 1.35,
+        baseProduction: 90,
+        baseCost: 3000,
+        costMultiplier: 1.30,
         resource: 'energy'
     },
     shrine: { 
         name: 'Sanctuar Mistic', 
         icon: '⛩️', 
         description: 'Loc sacru cu putere divină',
-        baseProduction: 0.5,
-        baseCost: 500,
-        costMultiplier: 1.25,
+        baseProduction: 1,
+        baseCost: 400,
+        costMultiplier: 1.35,
         resource: 'mana'
     },
     altar: { 
         name: 'Altar Arcanic', 
         icon: '🔮', 
         description: 'Ritualuri mistice generează putere',
-        baseProduction: 2,
-        baseCost: 2000,
-        costMultiplier: 1.3,
+        baseProduction: 4,
+        baseCost: 1500,
+        costMultiplier: 1.35,
         resource: 'mana'
     }
 };
@@ -213,68 +214,68 @@ class Game {
     energyBoost: { 
         name: 'Amplificator Energetic', 
         icon: '⚡', 
-        description: '+50% energie per secundă',
+        description: '+25% energie per secundă',
         maxLevel: 10,
-        multiplier: 1.5,
-        baseCost: 100,
+        multiplier: 1.25,
+        baseCost: 50,
         costResource: 'energy'
     },
     autoCollect: { 
         name: 'Colectare Automată', 
         icon: '🤖', 
-        description: 'Dublează producția offline',
+        description: '+50% productie offline per nivel',
         maxLevel: 5,
-        multiplier: 2,
-        baseCost: 500,
+        multiplier: 1.5,
+        baseCost: 200,
         costResource: 'energy'
     },
     offlineBonus: { 
         name: 'Bonus Offline', 
         icon: '⏰', 
-        description: '+80% timp offline maxim',
+        description: '+40% timp offline maxim',
         maxLevel: 5,
-        multiplier: 1.8,
-        baseCost: 300,
+        multiplier: 1.4,
+        baseCost: 150,
         costResource: 'energy'
     },
     gemFinder: { 
         name: 'Detector de Gemuri', 
         icon: '💎', 
-        description: '+30% șansă gemuri din puzzle',
+        description: '+20% șansă gemuri din puzzle',
         maxLevel: 10,
-        multiplier: 1.3,
-        baseCost: 200,
+        multiplier: 1.2,
+        baseCost: 100,
         costResource: 'energy'
     },
     energyCap: { 
         name: 'Depozit Energie', 
         icon: '🔋', 
-        description: 'Dublează capacitatea de energie',
+        description: '+50% capacitate de energie',
         maxLevel: 20,
-        multiplier: 2,
-        baseCost: 200,
+        multiplier: 1.5,
+        baseCost: 100,
         costResource: 'energy'
     },
     manaCap: { 
         name: 'Depozit Mana', 
         icon: '💙', 
-        description: 'Dublează capacitatea de mana',
+        description: '+50% capacitate de mana',
         maxLevel: 20,
-        multiplier: 2,
+        multiplier: 1.5,
         baseCost: 100,
         costResource: 'mana'
     }
 };
         
         this.guardianTemplates = [
-    { name: 'Sylvan', icon: '🧙‍♂️', rarity: 'common', bonus: 1.05 },      // era 1.1
-    { name: 'Lyra', icon: '🧙‍♀️', rarity: 'common', bonus: 1.08 },        // era 1.15
-    { name: 'Thorin', icon: '⚔️', rarity: 'rare', bonus: 1.15 },           // era 1.3
-    { name: 'Aria', icon: '🏹', rarity: 'rare', bonus: 1.20 },             // era 1.35
-    { name: 'Zephyr', icon: '🌪️', rarity: 'epic', bonus: 1.35 },          // era 1.6
-    { name: 'Phoenix', icon: '🔥', rarity: 'epic', bonus: 1.45 },          // era 1.7
-    { name: 'Celestia', icon: '✨', rarity: 'legendary', bonus: 1.8 },     // era 2.5
-    { name: 'Omega', icon: '⭐', rarity: 'legendary', bonus: 2.2 }         // era 3.0
+    { name: 'Sylvan', icon: '🧙‍♂️', rarity: 'common', bonus: 1.06 },
+    { name: 'Lyra', icon: '🧙‍♀️', rarity: 'common', bonus: 1.08 },
+    { name: 'Thorin', icon: '⚔️', rarity: 'rare', bonus: 1.15 },
+    { name: 'Aria', icon: '🏹', rarity: 'rare', bonus: 1.18 },
+    { name: 'Zephyr', icon: '🌪️', rarity: 'epic', bonus: 1.30 },
+    { name: 'Phoenix', icon: '🔥', rarity: 'epic', bonus: 1.35 },
+    { name: 'Celestia', icon: '✨', rarity: 'legendary', bonus: 1.60 },
+    { name: 'Omega', icon: '⭐', rarity: 'legendary', bonus: 1.80 }
 ];
         
         this.questTemplates = [
@@ -301,9 +302,9 @@ class Game {
                 },
                 unlockRequirement: { puzzlesCompleted: 5 },
                 rewards: {
-                    gems: 50,
-                    crystals: 2,
-                    energy: 2000,
+                    gems: 100,
+                    crystals: 5,
+                    energy: 5000,
                     guaranteedGuardian: 'rare'
                 }
             },
@@ -322,9 +323,9 @@ class Game {
                 },
                 unlockRequirement: { puzzlesCompleted: 15 },
                 rewards: {
-                    gems: 100,
-                    crystals: 5,
-                    energy: 5000,
+                    gems: 200,
+                    crystals: 10,
+                    energy: 12000,
                     guaranteedGuardian: 'epic'
                 }
             },
@@ -343,9 +344,9 @@ class Game {
                 },
                 unlockRequirement: { puzzlesCompleted: 30 },
                 rewards: {
-                    gems: 200,
-                    crystals: 10,
-                    energy: 10000,
+                    gems: 400,
+                    crystals: 20,
+                    energy: 25000,
                     guaranteedGuardian: 'epic'
                 }
             },
@@ -364,9 +365,9 @@ class Game {
                 },
                 unlockRequirement: { puzzlesCompleted: 50 },
                 rewards: {
-                    gems: 350,
-                    crystals: 20,
-                    energy: 20000,
+                    gems: 600,
+                    crystals: 35,
+                    energy: 50000,
                     guaranteedGuardian: 'legendary'
                 }
             },
@@ -385,9 +386,9 @@ class Game {
                 },
                 unlockRequirement: { puzzlesCompleted: 100 },
                 rewards: {
-                    gems: 500,
-                    crystals: 50,
-                    energy: 50000,
+                    gems: 1000,
+                    crystals: 80,
+                    energy: 120000,
                     guaranteedGuardian: 'legendary',
                     specialReward: 'Boss Slayer Title'
                 }
@@ -418,7 +419,7 @@ class Game {
             lava_forge: { 
                 baseProduction: 5, 
                 baseCost: 500, 
-                costMultiplier: 1.2, 
+                costMultiplier: 1.15, 
                 resource: 'volcanic_energy',
                 icon: '⚒️',
                 name: 'Forjă de Lavă',
@@ -427,7 +428,7 @@ class Game {
             magma_extractor: { 
                 baseProduction: 25, 
                 baseCost: 2500, 
-                costMultiplier: 1.25, 
+                costMultiplier: 1.15, 
                 resource: 'volcanic_energy',
                 icon: '🏭',
                 name: 'Extractor de Magmă',
@@ -436,7 +437,7 @@ class Game {
             fire_temple: { 
                 baseProduction: 100, 
                 baseCost: 10000, 
-                costMultiplier: 1.3, 
+                costMultiplier: 1.15, 
                 resource: 'volcanic_energy',
                 icon: '⛩️',
                 name: 'Templu de Foc',
@@ -445,7 +446,7 @@ class Game {
             inferno_reactor: { 
                 baseProduction: 500, 
                 baseCost: 50000, 
-                costMultiplier: 1.35, 
+                costMultiplier: 1.15, 
                 resource: 'volcanic_energy',
                 icon: '⚛️',
                 name: 'Reactor Infernal',
@@ -454,7 +455,7 @@ class Game {
             phoenix_nest: { 
                 baseProduction: 2000, 
                 baseCost: 250000, 
-                costMultiplier: 1.4, 
+                costMultiplier: 1.15, 
                 resource: 'volcanic_energy',
                 icon: '🔥',
                 name: 'Cuib de Phoenix',
@@ -464,11 +465,11 @@ class Game {
         
         // ⭐ FIRE GUARDIANS
         this.fireGuardianTemplates = [
-            { name: 'Ignis', icon: '🔥', rarity: 'rare', bonus: 1.4, realm: 'volcano' },
-            { name: 'Blaze', icon: '💥', rarity: 'rare', bonus: 1.45, realm: 'volcano' },
-            { name: 'Inferno', icon: '🌪️', rarity: 'epic', bonus: 1.8, realm: 'volcano' },
-            { name: 'Pyro', icon: '⚡', rarity: 'epic', bonus: 1.9, realm: 'volcano' },
-            { name: 'Ragnarok', icon: '🌋', rarity: 'legendary', bonus: 3.5, realm: 'volcano' }
+            { name: 'Ignis', icon: '🔥', rarity: 'rare', bonus: 1.20, realm: 'volcano' },
+            { name: 'Blaze', icon: '💥', rarity: 'rare', bonus: 1.25, realm: 'volcano' },
+            { name: 'Inferno', icon: '🌪️', rarity: 'epic', bonus: 1.40, realm: 'volcano' },
+            { name: 'Pyro', icon: '⚡', rarity: 'epic', bonus: 1.45, realm: 'volcano' },
+            { name: 'Ragnarok', icon: '🌋', rarity: 'legendary', bonus: 2.00, realm: 'volcano' }
         ];
         
         // ⭐ SHOP CONFIG
@@ -692,6 +693,10 @@ renderVolcanoStructures() {
         const production = this.getVolcanoStructureProduction(key);
         const canAfford = this.state.energy >= cost; // Use energy to buy volcano structures
         
+        const milestone = this.getMilestoneInfo(structure.level);
+        const milestoneText = structure.level >= 25 ? 
+            `<div class="structure-milestone">🎯 ${milestone.current} ${milestone.next ? '→ ' + milestone.bonus + ' la nivelul ' + milestone.next : 'MAX!'}</div>` : '';
+        
         const card = document.createElement('div');
         card.className = `structure-card volcano-structure ${canAfford ? 'can-afford' : ''}`;
         card.dataset.structure = key;
@@ -705,6 +710,7 @@ renderVolcanoStructures() {
             <div class="structure-production">
                 ${production > 0 ? `+${this.formatNumber(production)}/s 🌋` : 'Necumpărat'}
             </div>
+            ${milestoneText}
             <div class="structure-cost">
                 <span class="cost-item ${canAfford ? '' : 'cant-afford'}">
                     ⚡ ${this.formatNumber(cost)}
@@ -728,7 +734,8 @@ getVolcanoStructureCost(structureKey) {
 getVolcanoStructureProduction(structureKey) {
     const structure = this.state.volcanoStructures[structureKey];
     const data = this.volcanoStructureData[structureKey];
-    return data.baseProduction * structure.level;
+    const base = data.baseProduction * structure.level;
+    return base * this.getMilestoneMultiplier(structure.level);
 }
 
 buyVolcanoStructure(structureKey) {
@@ -790,12 +797,12 @@ calculateVolcanicEnergyPerSecond() {
         volcanicTotal *= multiplier;
     }
     
-    // Guardians (ADITIV)
-    let guardianBonus = 0;
+    // Guardians (MULTIPLICATIVE)
+    let guardianMultiplier = 1;
     for (let guardian of this.state.guardians) {
-        guardianBonus += (guardian.bonus - 1);
+        guardianMultiplier *= guardian.bonus;
     }
-    volcanicTotal *= (1 + guardianBonus);
+    volcanicTotal *= guardianMultiplier;
     
     // Ascension
     if (this.state.ascensionLevel > 0) {
@@ -901,6 +908,12 @@ skipTutorialPrompt() {
     if (modal) modal.remove();
     
     localStorage.setItem('tutorialCompleted', 'true');
+    
+    if (this.state.energy < 100) {
+        this.state.energy = 100;
+        this.showToast('🎁 +100 ⚡ Energie de start!', 'info');
+        this.updateUI();
+    }
 }
 
 tutorialSteps = [
@@ -1269,6 +1282,13 @@ skipTutorial() {
         this.closeTutorial();
         soundManager.playError();
         localStorage.setItem('tutorialCompleted', 'true');
+        
+        if (this.state.energy < 100) {
+            this.state.energy = 100;
+            this.showToast('🎁 +100 ⚡ Energie de start!', 'info');
+            this.updateUI();
+        }
+        
         setTimeout(() => this.checkDailyRewards(), 500);
     });
 }
@@ -1346,13 +1366,13 @@ replayTutorial() {
     }
     
     dailyRewardsConfig = [
-        { day: 1, gems: 50, energy: 0, crystals: 0, guardian: null },
-        { day: 2, gems: 100, energy: 500, crystals: 0, guardian: null },
-        { day: 3, gems: 150, energy: 0, crystals: 1, guardian: null },
-        { day: 4, gems: 200, energy: 1000, crystals: 0, guardian: null },
-        { day: 5, gems: 300, energy: 0, crystals: 0, guardian: 'rare' },
-        { day: 6, gems: 400, energy: 0, crystals: 2, guardian: null },
-        { day: 7, gems: 500, energy: 2000, crystals: 5, guardian: 'epic' }
+        { day: 1, gems: 75, energy: 200, crystals: 0, guardian: null },
+        { day: 2, gems: 150, energy: 800, crystals: 0, guardian: null },
+        { day: 3, gems: 200, energy: 500, crystals: 2, guardian: null },
+        { day: 4, gems: 250, energy: 1500, crystals: 1, guardian: null },
+        { day: 5, gems: 400, energy: 1000, crystals: 2, guardian: 'rare' },
+        { day: 6, gems: 500, energy: 1500, crystals: 3, guardian: null },
+        { day: 7, gems: 750, energy: 3000, crystals: 8, guardian: 'epic' }
     ];
     
     checkDailyRewards() {
@@ -1580,7 +1600,6 @@ replayTutorial() {
         this.generateQuests();
     }
     
-    this.checkDailyReward();
     this.checkAchievements();
     this.checkBossUnlocks();
     this.initTutorial();
@@ -1625,6 +1644,10 @@ replayTutorial() {
     });
     document.getElementById(`${tabName}-tab`).classList.add('active');
     
+    if (typeof sessionTracker !== 'undefined') {
+        sessionTracker.tabOpened(tabName);
+    }
+    
     if (tabName === 'puzzle' && !this.puzzle.isInitialized) {
         this.puzzle.init();
     }
@@ -1666,7 +1689,19 @@ replayTutorial() {
     
     this.state.energy = Math.min(this.state.energy + energyGained, this.state.energyCap);
     
+    // Cap reached toast (once per session per resource)
+    if (this.state.energy >= this.state.energyCap && !this._energyCapToastShown) {
+        this._energyCapToastShown = true;
+        this.showToast('⚡ Capacitate maximă! Upgradează Depozitul de Energie!', 'warning');
+    }
+    
     this.state.mana = Math.min(this.state.mana + manaGained, this.state.manaCap);
+    
+    // Cap reached toast (once per session per resource)
+    if (this.state.mana >= this.state.manaCap && !this._manaCapToastShown) {
+        this._manaCapToastShown = true;
+        this.showToast('💙 Capacitate maximă! Upgradează Depozitul de Mana!', 'warning');
+    }
     
     if (this.state.volcanoUnlocked) {
         const volcanicGained = this.state.volcanicEnergyPerSecond * deltaTime;
@@ -1753,18 +1788,17 @@ if (energyBoostLevel > 0) {
     energyTotal *= multiplier;
 }
     
-    // GUARDIAN BONUSES (BALANCED - ADITIV)
-    let guardianBonus = 0;
+    // GUARDIAN BONUSES (MULTIPLICATIVE - fiecare guardian inmulteste productia)
+    let guardianMultiplier = 1;
     for (let guardian of this.state.guardians) {
-        guardianBonus += (guardian.bonus - 1); // Ex: 1.5x → +0.5
+        guardianMultiplier *= guardian.bonus;
     }
-    const totalGuardianMultiplier = 1 + guardianBonus;
-    energyTotal *= totalGuardianMultiplier;
-    manaTotal *= totalGuardianMultiplier;
+    energyTotal *= guardianMultiplier;
+    manaTotal *= guardianMultiplier;
     
-    // Ascension bonus
+    // Ascension bonus (+25% per level)
     if (this.state.ascensionLevel > 0) {
-        const ascensionBonus = 1 + (this.state.ascensionLevel * 0.1);
+        const ascensionBonus = 1 + (this.state.ascensionLevel * 0.25);
         energyTotal *= ascensionBonus;
         manaTotal *= ascensionBonus;
     }
@@ -1795,8 +1829,8 @@ if (energyBoostLevel > 0) {
 }
     
     calculateResourceCaps() {
-    let energyCap = 1000;
-    let manaCap = 100;
+    let energyCap = 25000;
+    let manaCap = 5000;
     
     if (this.state.upgrades.energyCap && this.state.upgrades.energyCap.level > 0) {
         const data = this.upgradeData.energyCap;  // ← ADAUGĂ ASTA
@@ -1809,8 +1843,8 @@ if (energyBoostLevel > 0) {
     }
     
     if (this.state.ascensionLevel > 0) {
-        energyCap *= (1 + this.state.ascensionLevel * 0.5);
-        manaCap *= (1 + this.state.ascensionLevel * 0.5);
+        energyCap *= (1 + this.state.ascensionLevel * 1.0);
+        manaCap *= (1 + this.state.ascensionLevel * 1.0);
     }
     
     this.state.energyCap = Math.floor(energyCap);
@@ -1846,6 +1880,10 @@ if (energyBoostLevel > 0) {
                 
         const resourceIcon = structure.resource === 'energy' ? '⚡' : '💙';
         
+        const milestone = this.getMilestoneInfo(structure.level);
+        const milestoneText = structure.level >= 25 ? 
+            `<div class="structure-milestone">🎯 ${milestone.current} ${milestone.next ? '→ ' + milestone.bonus + ' la nivelul ' + milestone.next : 'MAX!'}</div>` : '';
+        
         const card = document.createElement('div');
         card.className = `structure-card ${canAfford ? 'can-afford' : ''}`;
         card.dataset.structure = key;
@@ -1859,6 +1897,7 @@ if (energyBoostLevel > 0) {
             <div class="structure-production">
                 ${production > 0 ? `+${this.formatNumber(production)}/s ${resourceIcon}` : 'Necumpărat'}
             </div>
+            ${milestoneText}
             <div class="structure-cost">
                 <span class="cost-item ${canAfford ? '' : 'cant-afford'}">
                     ⚡ ${this.formatNumber(cost)}
@@ -1923,8 +1962,24 @@ if (energyBoostLevel > 0) {
 
 getStructureProduction(structureKey) {
     const structure = this.state.structures[structureKey];
-    const data = this.structureData[structureKey];  // ← ADAUGĂ ASTA
-    return data.baseProduction * structure.level;
+    const data = this.structureData[structureKey];
+    if (!structure || !data || typeof structure.level !== 'number' || isNaN(structure.level)) return 0;
+    const base = data.baseProduction * structure.level;
+    return base * this.getMilestoneMultiplier(structure.level);
+}
+
+getMilestoneMultiplier(level) {
+    if (level >= 100) return 8;
+    if (level >= 50) return 4;
+    if (level >= 25) return 2;
+    return 1;
+}
+
+getMilestoneInfo(level) {
+    if (level >= 100) return { next: null, bonus: 'x8', current: 'x8', progress: 100 };
+    if (level >= 50) return { next: 100, bonus: 'x8', current: 'x4', progress: ((level - 50) / 50) * 100 };
+    if (level >= 25) return { next: 50, bonus: 'x4', current: 'x2', progress: ((level - 25) / 25) * 100 };
+    return { next: 25, bonus: 'x2', current: 'x1', progress: (level / 25) * 100 };
 }
     
     buyStructure(structureKey) {
@@ -1935,6 +1990,10 @@ getStructureProduction(structureKey) {
         
         this.state.energy -= cost;
         this.state.structures[structureKey].level++;
+        
+        if (typeof sessionTracker !== 'undefined') {
+            sessionTracker.structureBought(structureKey, this.state.structures[structureKey].level, cost, this.state.energy, this.state.mana);
+        }
         
         this.state.statistics.totalStructuresBought++;
         this.state.statistics.totalClicks++;
@@ -1987,11 +2046,23 @@ getStructureProduction(structureKey) {
         
         const card = document.createElement('div');
         card.className = 'upgrade-card';
+        
+        // Cap alert: highlight when resource is full
+        let capAlertBadge = '';
+        if (key === 'energyCap' && this.state.energy >= this.state.energyCap && !maxed) {
+            card.classList.add('cap-alert');
+            capAlertBadge = '<span class="cap-alert-badge">⚡ PLIN!</span>';
+        }
+        if (key === 'manaCap' && this.state.mana >= this.state.manaCap && !maxed) {
+            card.classList.add('cap-alert');
+            capAlertBadge = '<span class="cap-alert-badge">💙 PLIN!</span>';
+        }
+        
         card.innerHTML = `
             <div class="upgrade-header">
                 <span class="upgrade-icon">${data.icon}</span>
                 <div class="upgrade-info">
-                    <h3>${data.name}</h3>
+                    <h3>${data.name}${capAlertBadge}</h3>
                     <div class="upgrade-level">Nivel ${upgrade.level}/${data.maxLevel}</div>
                 </div>
             </div>
@@ -2042,6 +2113,14 @@ getStructureProduction(structureKey) {
         
         this.state.upgrades[upgradeKey].level++;
         
+        if (typeof sessionTracker !== 'undefined') {
+            sessionTracker.upgradeBought(upgradeKey, this.state.upgrades[upgradeKey].level, cost, data.costResource);
+        }
+        
+        // Reset cap toast flags so player sees toast again for new cap
+        if (upgradeKey === 'energyCap') this._energyCapToastShown = false;
+        if (upgradeKey === 'manaCap') this._manaCapToastShown = false;
+        
         this.calculateEnergyPerSecond();
         this.calculateResourceCaps();
         this.updateStructureButtons();
@@ -2063,11 +2142,15 @@ getStructureProduction(structureKey) {
         container.innerHTML = '';
         
         if (this.state.guardians.length === 0) {
-            container.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: var(--text-secondary);">Nu ai gardieni. Invocă-ți primul guardian!</p>';
+            container.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: var(--text-secondary);">Nu ai gardieni. Invocă-ți primul guardian! (50 💎)</p>';
             return;
         }
         
-        for (let guardian of this.state.guardians) {
+        for (let i = 0; i < this.state.guardians.length; i++) {
+            const guardian = this.state.guardians[i];
+            const trainingCost = 500;
+            const canTrain = this.state.gems >= trainingCost;
+            
             const card = document.createElement('div');
             card.className = `guardian-card ${guardian.rarity}`;
             card.innerHTML = `
@@ -2077,19 +2160,56 @@ getStructureProduction(structureKey) {
                 <div class="guardian-stats">
                     Bonus: +${Math.floor((guardian.bonus - 1) * 100)}% producție
                 </div>
+                <div class="guardian-training">
+                    <button class="train-btn ${canTrain ? '' : 'cant-afford'}" 
+                            onclick="game.trainGuardian(${i})" 
+                            ${canTrain ? '' : 'disabled'}>
+                        🎓 Antrenează (500 💎)
+                    </button>
+                    <div class="train-info">+5% bonus permanent</div>
+                </div>
             `;
             
             container.appendChild(card);
         }
     }
     
+    trainGuardian(index) {
+        const cost = 500;
+        if (this.state.gems < cost) {
+            soundManager.playError();
+            this.showToast('❌ Gemuri insuficiente! (500 💎)', 'error');
+            return;
+        }
+        
+        if (index < 0 || index >= this.state.guardians.length) return;
+        
+        const guardian = this.state.guardians[index];
+        this.state.gems -= cost;
+        this.state.statistics.totalGemsSpent += cost;
+        
+        // +5% bonus permanent (multiplicativ)
+        guardian.bonus = parseFloat((guardian.bonus * 1.05).toFixed(4));
+        
+        this.calculateEnergyPerSecond();
+        if (this.state.volcanoUnlocked) {
+            this.calculateVolcanicEnergyPerSecond();
+        }
+        this.renderGuardians();
+        this.updateUI();
+        this.saveGame();
+        
+        soundManager.playLevelUp();
+        this.showToast(`🎓 ${guardian.name} antrenat! Bonus: +${Math.floor((guardian.bonus - 1) * 100)}%`, 'success');
+    }
+    
     summonGuardian() {
-    const cost = 100;
+    const cost = 50;
     
     if (this.state.gems < cost) {
         soundManager.playError();
         particleSystem.screenShake(300, 5);
-        this.showToast('❌ Gemuri insuficiente!', 'error');
+        this.showToast('❌ Gemuri insuficiente! (50 💎 necesare)', 'error');
         return;
     }
     
@@ -2770,27 +2890,46 @@ showBossVictory(boss) {
 }
     
     canAscend() {
-        const requirement = this.config.ascensionRequirement * Math.pow(10, this.state.ascensionLevel);
+        const requirement = this.config.ascensionRequirement * Math.pow(this.config.ascensionScaleFactor, this.state.ascensionLevel);
         return this.state.lifetimeEnergy >= requirement;
     }
     
     ascend() {
     if (!this.canAscend()) {
-        soundManager.playError(); // ← ERROR
+        soundManager.playError();
         this.showToast('❌ Nu ai suficientă energie lifetime pentru ascensiune!', 'error');
         return;
     }
     
-    if (!confirm('Vrei să faci ascensiune? Vei reseta progresul dar vei primi bonusuri permanente!\n\n+10% producție per nivel\n+50% capacitate resurse per nivel')) {
+    const requirement = this.config.ascensionRequirement * Math.pow(this.config.ascensionScaleFactor, this.state.ascensionLevel);
+    const previewBonus = (this.state.ascensionLevel + 1) * 25;
+    
+    if (!confirm(`Vrei să faci ascensiune?\n\n📊 Progres resetat: Structuri + Upgrade-uri + Questuri\n✅ Păstrat: ${this.state.guardians.length} Gardieni | ${Math.floor(this.state.gems * 0.25)} 💎\n\n🌟 Bonus nou: +${previewBonus}% productie | +${(this.state.ascensionLevel + 1) * 100}% capacitate\n\nUrmătoarea ascendenta necesită: ${this.formatNumber(requirement * this.config.ascensionScaleFactor)} ⚡ lifetime`)) {
         return;
     }
     
-    // 🌟 EPIC ASCENSION SOUND
     soundManager.playAscension();
     
+    // Pastreaza gardieni (top 50% dupa bonus)
+    const sortedGuardians = [...this.state.guardians].sort((a, b) => b.bonus - a.bonus);
+    const keepCount = Math.ceil(sortedGuardians.length / 2);
+    const keptGuardians = sortedGuardians.slice(0, keepCount);
+    
+    // Pastreaza 25% gemuri
+    const keptGems = Math.floor(this.state.gems * 0.25);
+    
+    // Pastreaza achievements si stats
+    const savedAchievements = { ...this.state.achievements };
+    const savedStats = { ...this.state.statistics };
+    const savedPuzzleStats = { ...this.state.puzzleStats };
+    const savedBosses = { ...this.state.bosses };
+    
+    // RESET — structuri, upgrades, questuri
     this.state.energy = 0;
     this.state.mana = 0;
     this.state.coins = 0;
+    this.state.gems = keptGems;
+    this.state.crystals = Math.floor(this.state.crystals * 0.5); // Pastreaza 50% cristale
     
     for (let key in this.state.structures) {
         this.state.structures[key].level = 0;
@@ -2800,12 +2939,18 @@ showBossVictory(boss) {
         this.state.upgrades[key].level = 0;
     }
     
-    this.state.guardians = [];
+    this.state.guardians = keptGuardians;
     this.state.activeQuests = [];
     this.state.completedQuestsToday = 0;
     
+    // Restaura achievements, stats, puzzle, bosses
+    this.state.achievements = savedAchievements;
+    this.state.statistics = savedStats;
+    this.state.puzzleStats = savedPuzzleStats;
+    this.state.bosses = savedBosses;
+    
     this.state.ascensionLevel++;
-    this.state.ascensionPoints++;
+    this.state.ascensionPoints += Math.floor(Math.sqrt(this.state.lifetimeEnergy / 10000));
     
     this.calculateEnergyPerSecond();
     this.calculateResourceCaps();
@@ -2817,36 +2962,9 @@ showBossVictory(boss) {
     this.renderQuests();
     this.updateUI();
     
-    this.showToast(`🌟 Ascensiune completă! Nivel ${this.state.ascensionLevel}`, 'success');
+    this.showToast(`🌟 Ascensiune completă! Nivel ${this.state.ascensionLevel} | +${this.state.ascensionLevel * 25}% productie`, 'success');
     this.saveGame();
 }
-    
-    checkDailyReward() {
-        const now = Date.now();
-        const lastReward = this.state.lastDailyReward || 0;
-        const dayInMs = 86400000;
-        
-        if (now - lastReward >= dayInMs) {
-            this.showDailyReward();
-        }
-    }
-    
-    showDailyReward() {
-        const rewards = {
-            gems: 20,
-            energy: 500,
-            mana: 50
-        };
-        
-        this.state.gems += rewards.gems;
-        this.state.energy += rewards.energy; // Permite peste CAP
-        this.state.mana = Math.min(this.state.mana + rewards.mana, this.state.manaCap);
-        this.state.lastDailyReward = Date.now();
-        
-        this.showToast(`🎁 Recompensă zilnică: ${rewards.gems}💎 + ${rewards.energy}⚡ + ${rewards.mana}💙`, 'success');
-        this.updateUI();
-        this.saveGame();
-    }
     
     calculateOfflineProgress() {
     const now = Date.now();
@@ -2874,9 +2992,9 @@ showBossVictory(boss) {
         manaPerSecond *= Math.pow(2, autoCollectLevel);
     }
     
-    // Reducere offline - doar 50% din producție
-    const energyEarned = Math.floor(energyPerSecond * offlineSeconds * 0.5);
-    const manaEarned = Math.floor(manaPerSecond * offlineSeconds * 0.5);
+    // Reducere offline - 60% din producție (base)
+    const energyEarned = Math.floor(energyPerSecond * offlineSeconds * 0.6);
+    const manaEarned = Math.floor(manaPerSecond * offlineSeconds * 0.6);
     
     this.state.energy = Math.min(this.state.energy + energyEarned, this.state.energyCap);
     this.state.mana = Math.min(this.state.mana + manaEarned, this.state.manaCap);
@@ -2930,12 +3048,12 @@ showBossVictory(boss) {
             
             // MIGRATION - Add missing upgrades
             if (!saveData.state.upgrades.energyCap) {
-                saveData.state.upgrades.energyCap = { level: 0, maxLevel: 20, multiplier: 2, baseCost: 200, costResource: 'energy' };
+                saveData.state.upgrades.energyCap = { level: 0, maxLevel: 20, multiplier: 1.5, baseCost: 100, costResource: 'energy' };
                 console.log('🔄 Migration: Added energyCap');
             }
             
             if (!saveData.state.upgrades.manaCap) {
-                saveData.state.upgrades.manaCap = { level: 0, maxLevel: 20, multiplier: 2, baseCost: 100, costResource: 'mana' };
+                saveData.state.upgrades.manaCap = { level: 0, maxLevel: 20, multiplier: 1.5, baseCost: 100, costResource: 'mana' };
                 console.log('🔄 Migration: Added manaCap');
             }
             
@@ -2962,7 +3080,7 @@ if (!saveData.state.autoFeatures) {
         autoBuyStructures: { enabled: false, unlocked: false, cost: 500 },
         autoClaimQuests: { enabled: false, unlocked: false, cost: 300 },
         autoCollectOffline: { enabled: true, unlocked: true, cost: 0 },
-        autoPuzzle: { enabled: false, unlocked: false, cost: 2000 }
+                autoPuzzle: { enabled: false, unlocked: false, cost: 1000 }
     };
     console.log('🔄 Migration: Added auto features');
 }
@@ -3065,8 +3183,8 @@ if (saveData.state.autoBuyThreshold === undefined) {
             }
             
             // Add missing properties
-            if (saveData.state.energyCap === undefined) saveData.state.energyCap = 1000;
-            if (saveData.state.manaCap === undefined) saveData.state.manaCap = 100;
+            if (saveData.state.energyCap === undefined) saveData.state.energyCap = 25000;
+            if (saveData.state.manaCap === undefined) saveData.state.manaCap = 5000;
             if (saveData.state.mana === undefined) saveData.state.mana = 0;
             if (saveData.state.lifetimeEnergy === undefined) saveData.state.lifetimeEnergy = 0;
             if (saveData.state.ascensionLevel === undefined) saveData.state.ascensionLevel = 0;
@@ -3107,20 +3225,35 @@ if (saveData.state.autoBuyThreshold === undefined) {
     document.getElementById('energy-display').textContent = `${this.formatNumber(this.state.energy)}/${this.formatNumber(this.state.energyCap)}`;
     document.getElementById('gems-display').textContent = this.formatNumber(this.state.gems);
     
-    let manaDisplay = document.getElementById('mana-display');
-    if (!manaDisplay) {
-        const resourcesDiv = document.querySelector('.resources');
-        const manaItem = document.createElement('div');
-        manaItem.className = 'resource-item';
-        manaItem.title = 'Mana';
-        manaItem.innerHTML = `
-            <span class="resource-icon">💙</span>
-            <span id="mana-display">0</span>
-        `;
-        resourcesDiv.insertBefore(manaItem, resourcesDiv.children[1]);
-        manaDisplay = document.getElementById('mana-display');
+    // Energy progress bar
+    const energyBarFill = document.getElementById('energy-bar-fill');
+    if (energyBarFill) {
+        const energyPct = Math.min(100, (this.state.energy / this.state.energyCap) * 100);
+        energyBarFill.style.width = energyPct + '%';
+        if (energyPct >= 100) {
+            energyBarFill.classList.add('cap-reached');
+        } else {
+            energyBarFill.classList.remove('cap-reached');
+        }
     }
-    manaDisplay.textContent = `${this.formatNumber(this.state.mana)}/${this.formatNumber(this.state.manaCap)}`;
+    
+    // Mana display
+    let manaDisplay = document.getElementById('mana-display');
+    if (manaDisplay) {
+        manaDisplay.textContent = `${this.formatNumber(this.state.mana)}/${this.formatNumber(this.state.manaCap)}`;
+    }
+    
+    // Mana progress bar
+    const manaBarFill = document.getElementById('mana-bar-fill');
+    if (manaBarFill) {
+        const manaPct = Math.min(100, (this.state.mana / this.state.manaCap) * 100);
+        manaBarFill.style.width = manaPct + '%';
+        if (manaPct >= 100) {
+            manaBarFill.classList.add('cap-reached');
+        } else {
+            manaBarFill.classList.remove('cap-reached');
+        }
+    }
     
     // ⭐ ADAUGĂ VOLCANIC ENERGY DISPLAY
     if (this.state.volcanoUnlocked) {
@@ -3295,7 +3428,7 @@ getAutoFeatureDescription(key) {
         autoBuyStructures: 'Automatically purchases cheapest structure when you have 80% of energy cap',
         autoClaimQuests: 'Automatically claims completed quests and generates new ones',
         autoCollectOffline: 'Automatically collects offline progress when you return',
-        autoPuzzle: 'Automatically plays puzzles every 60 seconds (requires 10 gems per puzzle)'
+        autoPuzzle: 'Automatically plays puzzles every 60 seconds (requires 5 gems per puzzle)'
     };
     return descriptions[key] || '';
 }
@@ -3361,7 +3494,7 @@ autoPuzzlePlay() {
     if (!this.state.autoFeatures.autoPuzzle.enabled) return;
     if (this.puzzle.state.isProcessing) return;
     
-    const cost = 10; // 10 gems per auto-puzzle
+    const cost = 5; // 5 gems per auto-puzzle
     
     if (this.state.gems < cost) {
         this.state.autoFeatures.autoPuzzle.enabled = false;
@@ -3373,7 +3506,7 @@ autoPuzzlePlay() {
     this.state.gems -= cost;
     
     // Simulate puzzle completion
-    const simulatedScore = Math.floor(Math.random() * 400) + 400; // 400-800 score
+    const simulatedScore = Math.floor(Math.random() * 200) + 150; // 150-350 score
     
     if (simulatedScore >= this.puzzle.config.targetScore) {
         this.puzzle.state.score = simulatedScore;
@@ -4870,7 +5003,7 @@ confirmReset() {
         }
         
         const canAscend = this.canAscend();
-        const requirement = this.config.ascensionRequirement * Math.pow(10, this.state.ascensionLevel);
+        const requirement = this.config.ascensionRequirement * Math.pow(this.config.ascensionScaleFactor, this.state.ascensionLevel);
         
         ascendBtn.innerHTML = canAscend ? 
             `🌟 Ascensiune (Nivel ${this.state.ascensionLevel + 1})` :
@@ -4924,11 +5057,11 @@ class PuzzleGame {
         this.config = {
             gridSize: 8,
             colors: ['🔴', '🔵', '🟢', '🟡', '🟣', '🟠'],
-            movesStart: 20,
-            targetScore: 500,
-            scorePerMatch: 50,
-            comboMultiplier: 1.5,
-            gemReward: 5 // FIX: Adăugat explicit aici
+            movesStart: 15,
+            targetScore: 300,
+            scorePerMatch: 10,
+            comboMultiplier: 1.25,
+            gemReward: 5
         };
         
         this.state = {
@@ -4983,8 +5116,8 @@ exitBossBattle() {
     // Reset to normal config
     this.config.gridSize = 8;
     this.config.colors = ['🔴', '🔵', '🟢', '🟡', '🟣', '🟠'];
-    this.config.movesStart = 20;
-    this.config.targetScore = 500;
+    this.config.movesStart = 15;
+    this.config.targetScore = 300;
     
     const bossInfo = document.querySelector('.boss-battle-info');
     if (bossInfo) bossInfo.remove();
@@ -4999,9 +5132,17 @@ exitBossBattle() {
     }
     
     newGame() {
-        this.state.moves = this.config.movesStart;
+        // Progressive scaling for regular puzzles (not bosses)
+        if (!this.isBossBattle) {
+            const puzzlesCompleted = this.game.state.puzzleStats.totalCompleted;
+            this.state.moves = Math.max(8, 15 - Math.floor(puzzlesCompleted / 5));
+            this.state.target = 300 + (puzzlesCompleted * 15);
+        } else {
+            this.state.moves = this.config.movesStart;
+            this.state.target = this.config.targetScore;
+        }
+        
         this.state.score = 0;
-        this.state.target = this.config.targetScore;
         this.state.selectedCell = null;
         this.state.combo = 0;
         
@@ -5135,16 +5276,26 @@ exitBossBattle() {
         this.state.combo = 0;
         
         while (hasMatches) {
-            const matches = this.findMatches();
+            const groups = this.findMatches();
             
-            if (matches.length === 0) {
+            if (groups.length === 0) {
                 hasMatches = false;
                 break;
             }
             
             this.state.combo++;
-            const baseScore = matches.length * this.config.scorePerMatch;
-            const comboBonus = Math.pow(this.config.comboMultiplier, this.state.combo - 1);
+            
+            // Scoring per group: match-3=30, match-4=60, match-5+=100
+            let baseScore = 0;
+            for (const group of groups) {
+                const len = group.length;
+                if (len >= 5) baseScore += 100;
+                else if (len >= 4) baseScore += 60;
+                else baseScore += 30;
+            }
+            
+            // Linear combo: 1.0, 1.2, 1.4, 1.6, 1.8...
+            const comboBonus = 1 + (this.state.combo * 0.2);
             const totalScore = Math.floor(baseScore * comboBonus);
             
             this.state.score += totalScore;
@@ -5153,15 +5304,17 @@ exitBossBattle() {
                 this.game.showToast(`🔥 Combo x${this.state.combo}! +${totalScore}`, 'success');
             }
             
-            for (let match of matches) {
-                const cell = this.getCellElement(match.row, match.col);
-                cell.classList.add('matched');
+            // Animate + clear all cells from all groups
+            const allCells = groups.flat();
+            for (const cell of allCells) {
+                const el = this.getCellElement(cell.row, cell.col);
+                if (el) el.classList.add('matched');
             }
             
             await this.sleep(500);
             
-            for (let match of matches) {
-                this.state.grid[match.row][match.col] = null;
+            for (const cell of allCells) {
+                this.state.grid[cell.row][cell.col] = null;
             }
             
             await this.dropCells();
@@ -5173,9 +5326,10 @@ exitBossBattle() {
     }
     
     findMatches() {
-        const matches = [];
+        const groups = [];
         const counted = new Set();
         
+        // Horizontal matches
         for (let row = 0; row < this.config.gridSize; row++) {
             for (let col = 0; col < this.config.gridSize - 2; col++) {
                 const color = this.state.grid[row][col];
@@ -5188,17 +5342,20 @@ exitBossBattle() {
                 }
                 
                 if (matchLength >= 3) {
+                    const group = [];
                     for (let i = 0; i < matchLength; i++) {
                         const key = `${row}-${col + i}`;
                         if (!counted.has(key)) {
-                            matches.push({ row, col: col + i });
+                            group.push({ row, col: col + i });
                             counted.add(key);
                         }
                     }
+                    if (group.length >= 3) groups.push(group);
                 }
             }
         }
         
+        // Vertical matches
         for (let col = 0; col < this.config.gridSize; col++) {
             for (let row = 0; row < this.config.gridSize - 2; row++) {
                 const color = this.state.grid[row][col];
@@ -5211,26 +5368,29 @@ exitBossBattle() {
                 }
                 
                 if (matchLength >= 3) {
+                    const group = [];
                     for (let i = 0; i < matchLength; i++) {
                         const key = `${row + i}-${col}`;
                         if (!counted.has(key)) {
-                            matches.push({ row: row + i, col });
+                            group.push({ row: row + i, col });
                             counted.add(key);
                         }
                     }
+                    if (group.length >= 3) groups.push(group);
                 }
             }
         }
 
-        if (matches.length > 0) {
-        soundManager.playPuzzleMatch();
-        
-        if (this.state.combo > 1) {
-            soundManager.playPuzzleCombo(this.state.combo);
+        // Flatten for sound effects
+        const flatMatches = groups.flat();
+        if (flatMatches.length > 0) {
+            soundManager.playPuzzleMatch();
+            if (this.state.combo > 1) {
+                soundManager.playPuzzleCombo(this.state.combo);
+            }
         }
-    }
         
-        return matches;
+        return groups;
     }
     
     async dropCells() {
@@ -5265,6 +5425,32 @@ exitBossBattle() {
         document.getElementById('moves-left').textContent = this.state.moves;
         document.getElementById('puzzle-score').textContent = this.state.score;
         document.getElementById('puzzle-target').textContent = this.state.target;
+        
+        // Update extra moves button
+        const extraBtn = document.getElementById('extra-moves-btn');
+        if (extraBtn) {
+            const canAfford = this.game.state.gems >= 3;
+            extraBtn.disabled = !canAfford || this.state.isProcessing;
+        }
+    }
+    
+    buyExtraMoves() {
+        const cost = 3;
+        if (this.game.state.gems < cost) {
+            this.game.showToast('❌ Gemuri insuficiente! (3 💎)', 'error');
+            return;
+        }
+        
+        this.game.state.gems -= cost;
+        this.game.state.statistics.totalGemsSpent += cost;
+        this.state.moves += 5;
+        
+        soundManager.playPurchase();
+        this.updatePuzzleUI();
+        this.game.updateUI();
+        this.game.saveGame();
+        
+        this.game.showToast('🎮 +5 mutari extra!', 'success');
     }
     
     checkGameOver() {
@@ -5278,18 +5464,16 @@ exitBossBattle() {
     }
     
     gameWon() {
-        // FIX: Calculare SIGURĂ a gemurilor
         const baseGemReward = this.config.gemReward || 5;
         const bonusGems = Math.floor(this.state.score / 200);
         const totalGemReward = baseGemReward + bonusGems;
         
         const gemFinderLevel = this.game.state.upgrades.gemFinder ? this.game.state.upgrades.gemFinder.level : 0;
-        const gemBonus = gemFinderLevel > 0 ? Math.pow(1.3, gemFinderLevel) : 1;
+        const gemBonus = gemFinderLevel > 0 ? Math.pow(1.2, gemFinderLevel) : 1;
         
         let finalGems = Math.floor(totalGemReward * gemBonus);
-        let energyReward = Math.floor(this.state.score * 2);
+        let energyReward = Math.floor(this.state.score * 1);
         
-        // Verificare siguranță
         if (!finalGems || isNaN(finalGems) || finalGems < 1) {
             finalGems = baseGemReward;
         }
@@ -5304,19 +5488,23 @@ exitBossBattle() {
         }
         
         this.game.updateQuestProgress('complete', 'puzzles', 1);
-
-        // ⭐ TRACK statistics
         this.game.state.statistics.totalPuzzlesCompleted++;
+        
+        if (typeof sessionTracker !== 'undefined') {
+            sessionTracker.puzzleWon(this.state.score, finalGems, energyReward);
+        }
         
         document.getElementById('final-score').textContent = this.state.score;
         document.getElementById('puzzle-rewards').textContent = `${finalGems} 💎 + ${this.game.formatNumber(energyReward)} ⚡`;
         document.getElementById('puzzle-complete').style.display = 'flex';
         
         this.pendingRewards = { gems: finalGems, energy: energyReward };
-        console.log('🎁 Puzzle won! Rewards:', this.pendingRewards);
     }
     
     gameLost() {
+        if (typeof sessionTracker !== 'undefined') {
+            sessionTracker.puzzleLost(this.state.score, this.state.moves);
+        }
         this.game.showToast('😔 Ai rămas fără mutări!', 'error');
         setTimeout(() => this.newGame(), 2000);
     }
@@ -5350,10 +5538,10 @@ exitBossBattle() {
 }
     
     useHint() {
-        const cost = 5;
+        const cost = 3;
         if (this.game.state.gems < cost) {
             soundManager.playError();
-            this.game.showToast('❌ Gemuri insuficiente!', 'error');
+            this.game.showToast('❌ Gemuri insuficiente! (3 💎)', 'error');
             return;
         }
         
@@ -5433,6 +5621,67 @@ window.addEventListener('DOMContentLoaded', () => {
             0%, 100% { transform: scale(1); box-shadow: 0 0 10px rgba(251, 191, 36, 0.5); }
             50% { transform: scale(1.15); box-shadow: 0 0 20px rgba(251, 191, 36, 1); }
         }
+        .structure-milestone {
+            background: linear-gradient(135deg, rgba(251, 191, 36, 0.15), rgba(245, 158, 11, 0.15));
+            border: 1px solid rgba(251, 191, 36, 0.3);
+            border-radius: 6px;
+            padding: 4px 8px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            color: #fbbf24;
+            text-align: center;
+            margin: 6px 0;
+        }
+        .guardian-training {
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            text-align: center;
+        }
+        .train-btn {
+            width: 100%;
+            padding: 6px 12px;
+            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+        }
+        .train-btn:hover:not(:disabled) {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.4);
+        }
+        .train-btn:disabled, .train-btn.cant-afford {
+            background: #4b5563;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+        .train-info {
+            font-size: 0.7rem;
+            color: #a78bfa;
+            margin-top: 4px;
+        }
+        #extra-moves-btn {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.2s;
+        }
+        #extra-moves-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4);
+        }
+        #extra-moves-btn:disabled {
+            background: #4b5563;
+            cursor: not-allowed;
+        }
         .quests-container {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -5476,6 +5725,50 @@ window.addEventListener('DOMContentLoaded', () => {
             font-weight: bold;
         }
         .claim-btn:disabled { background: #4b5563; cursor: not-allowed; }
+        .resource-bar {
+            flex: 0 0 100%;
+            width: 100%;
+            height: 6px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 3px;
+            overflow: hidden;
+            margin-top: 4px;
+        }
+        .resource-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #10b981, #34d399);
+            border-radius: 3px;
+            transition: width 0.3s ease;
+        }
+        .resource-bar-fill.mana-bar-fill {
+            background: linear-gradient(90deg, #3b82f6, #60a5fa);
+        }
+        .resource-bar-fill.cap-reached {
+            background: linear-gradient(90deg, #ef4444, #f87171);
+            animation: capPulse 1.5s ease-in-out infinite;
+        }
+        @keyframes capPulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+        .upgrade-card.cap-alert {
+            border: 2px solid #ef4444 !important;
+            box-shadow: 0 0 12px rgba(239, 68, 68, 0.4);
+            animation: capGlow 2s ease-in-out infinite;
+        }
+        @keyframes capGlow {
+            0%, 100% { box-shadow: 0 0 8px rgba(239, 68, 68, 0.3); }
+            50% { box-shadow: 0 0 16px rgba(239, 68, 68, 0.6); }
+        }
+        .cap-alert-badge {
+            background: #ef4444;
+            color: white;
+            font-size: 0.7rem;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: bold;
+            margin-left: 6px;
+        }
     `;
     document.head.appendChild(style);
 });

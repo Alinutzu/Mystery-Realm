@@ -16,6 +16,12 @@
                     <div class="resource-item" title="Energie Mistică">
                         <span class="resource-icon">⚡</span>
                         <span id="energy-display">0</span>
+                        <div class="resource-bar"><div class="resource-bar-fill" id="energy-bar-fill"></div></div>
+                    </div>
+                    <div class="resource-item" title="Mana Arcanică">
+                        <span class="resource-icon">💙</span>
+                        <span id="mana-display">0</span>
+                        <div class="resource-bar"><div class="resource-bar-fill mana-bar-fill" id="mana-bar-fill"></div></div>
                     </div>
                     <div class="resource-item" title="Gemuri Premium">
                         <span class="resource-icon">💎</span>
@@ -84,7 +90,8 @@
 
                 <div class="puzzle-controls">
                     <button id="new-puzzle-btn" onclick="game.puzzle.newGame()">🔄 Joc Nou</button>
-                    <button id="hint-btn" onclick="game.puzzle.useHint()">💡 Hint (5 💎)</button>
+                    <button id="extra-moves-btn" onclick="game.puzzle.buyExtraMoves()">🎮 +5 Mutari (3 💎)</button>
+                    <button id="hint-btn" onclick="game.puzzle.useHint()">💡 Hint (3 💎)</button>
                 </div>
 
                 <div id="puzzle-complete" class="puzzle-complete" style="display: none;">
@@ -284,5 +291,6 @@
     <script src="js/particles.js"></script>
     <script src="js/sounds.js"></script>
     <script src="js/game.js"></script>
+    <script src="tests/session-tracker.js" defer></script>
 </body>
 </html>

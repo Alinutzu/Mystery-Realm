@@ -67,6 +67,7 @@ body {
 
 .resource-item {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     gap: 0.5rem;
     background: rgba(0, 0, 0, 0.3);
